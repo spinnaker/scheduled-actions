@@ -1,4 +1,4 @@
-scheduled-actions is a library for management, operations and persistence of scheduled actions
+A library for management, operations and persistence of scheduled actions
 =
 
 Below are the features:
