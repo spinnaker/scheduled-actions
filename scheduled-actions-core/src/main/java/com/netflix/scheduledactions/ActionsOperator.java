@@ -23,9 +23,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * @author sthadeshwar
  */
-public class TriggeredActionsOperator {
+public class ActionsOperator {
 
-    private static final Logger logger = LoggerFactory.getLogger(TriggeredActionsOperator.class);
+    private static final Logger logger = LoggerFactory.getLogger(ActionsOperator.class);
 
     public static final String DEFAULT_INITIATOR = "Unknown";
 
@@ -37,9 +37,9 @@ public class TriggeredActionsOperator {
     private final ExecutorService executeService;
     private final ExecutorService cancelService;
 
-    private static TriggeredActionsOperator triggeredActionsOperator;
+    private static ActionsOperator actionsOperator;
 
-    private TriggeredActionsOperator(DaoConfigurer daoConfigurer, Executor executor, int threadPoolSize) {
+    private ActionsOperator(DaoConfigurer daoConfigurer, Executor executor, int threadPoolSize) {
         this.actionInstanceDao = daoConfigurer.getActionInstanceDao();
         this.triggerOperator = TriggerOperator.getInstance(daoConfigurer.getTriggerDao(), threadPoolSize);
         this.executor = executor;
@@ -56,25 +56,25 @@ public class TriggeredActionsOperator {
     }
 
     /**
-     * Factory method to get a {@code TriggeredActionsOperator} instance
+     * Factory method to get a {@code ActionsOperator} instance
      * @param daoConfigurer
      * @param executor
      * @param threadPoolSize
      * @return
      */
-    public static synchronized TriggeredActionsOperator getInstance(DaoConfigurer daoConfigurer, Executor executor, int threadPoolSize) {
-        if (triggeredActionsOperator == null) {
-            triggeredActionsOperator = new TriggeredActionsOperator(daoConfigurer, executor, threadPoolSize);
+    public static synchronized ActionsOperator getInstance(DaoConfigurer daoConfigurer, Executor executor, int threadPoolSize) {
+        if (actionsOperator == null) {
+            actionsOperator = new ActionsOperator(daoConfigurer, executor, threadPoolSize);
         }
-        return triggeredActionsOperator;
+        return actionsOperator;
     }
 
     /**
      *
      * @return
      */
-    public static TriggeredActionsOperator getExistingOperator() {
-        return triggeredActionsOperator;
+    public static ActionsOperator getExistingOperator() {
+        return actionsOperator;
     }
 
     /**
@@ -131,10 +131,10 @@ public class TriggeredActionsOperator {
         @Override
         public void call(Context context) {
             try {
-                TriggeredActionsOperator triggeredActionsOperator = TriggeredActionsOperator.getExistingOperator();
-                triggeredActionsOperator.execute(context.getActionInstanceId());
+                ActionsOperator actionsOperator = ActionsOperator.getExistingOperator();
+                actionsOperator.execute(context.getActionInstanceId());
             } catch (ActionInstanceNotFoundException e) {
-                actionLogger.error("Exception occurred in InternalAction while calling triggeredActionsOperator.execute() for context {}", context, e);
+                actionLogger.error("Exception occurred in InternalAction while calling actionsOperator.execute() for context {}", context, e);
             }
         }
     }

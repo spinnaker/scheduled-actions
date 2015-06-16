@@ -22,12 +22,12 @@ Following are the two artifacts:
 | ----------------------------- | ----------------------------- | -------- | ------------------------------------------------------------------ |
 | com.netflix.scheduledactions  | scheduled-actions-core        | Yes      | Core library features                                              |
 | com.netflix.scheduledactions  | scheduled-actions-cassandra   | No       | Provides cassandra persistence for ActionInstance, Execution, etc. |
-| com.netflix.scheduledactions  | scheduled-actions-web         | No       | Provides spring REST controller to access the ```ActionOperator``` |
+| com.netflix.scheduledactions  | scheduled-actions-web         | No       | Provides spring REST controller to access the ```ActionsOperator``` |
 
 Usage
 =
 
-```com.netflix.scheduledactions.TriggeredActionsOperator``` is the primary class for registering, enabling, disabling, executing and cancelling ```ActionInstance```s.
+```com.netflix.scheduledactions.ActionsOperator``` is the primary class for registering, enabling, disabling, executing and cancelling ```ActionInstance```s.
 
 #### Implement an Action ####
 
@@ -112,42 +112,42 @@ ActionInstance actionInstance = ActionInstance.newActionInstance()
     .build();
 ```
 
-#### Register the ActionInstance with ActionOperator ####
+#### Register the ActionInstance with ActionsOperator ####
 
-Once you have a ```ActionInstance```, you can register it with the ```ActionOperator```
+Once you have a ```ActionInstance```, you can register it with the ```ActionsOperator```
 
 ```java
-ActionOperator triggeredActionsOperator = ActionOperator.getInstance();
-triggeredActionsOperator.registerActionInstance(actionInstance);
+ActionsOperator actionsOperator = ActionsOperator.getInstance();
+actionsOperator.registerActionInstance(actionInstance);
 ```
 #### Execute the action ####
 
 If you want to execute your ```Action``` apart from being executed by the ```Trigger``` (if ```ActionInstance``` is created with a trigger), then
-you can use ```ActionOperator``` to execute the ```ActionInstance``` as well
+you can use ```ActionsOperator``` to execute the ```ActionInstance``` as well
 
 ```java
-triggeredActionsOperator.execute(actionInstance);
+actionsOperator.execute(actionInstance);
 ```
 OR
 ```java
-triggeredActionsOperator.execute(actionInstanceId);
+actionsOperator.execute(actionInstanceId);
 ```
 
 
 #### Vew action execution history ####
 
 ```java
-List<Execution> executions = triggeredActionsOperator.getExecutions(actionInstance.getId());
+List<Execution> executions = actionsOperator.getExecutions(actionInstance.getId());
 ```
 
 #### Cancel an action execution ####
 
 ```java
-triggeredActionsOperator.cancel(execution);
+actionsOperator.cancel(execution);
 ```
 OR
 ```java
-triggeredActionsOperator.cancel(executionId);
+actionsOperator.cancel(executionId);
 ```
 
 Copyright and License

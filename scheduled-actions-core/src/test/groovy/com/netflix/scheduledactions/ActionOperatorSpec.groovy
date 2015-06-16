@@ -1,13 +1,5 @@
 package com.netflix.scheduledactions
 import com.netflix.fenzo.triggers.persistence.InMemoryTriggerDao
-import com.netflix.scheduledactions.ActionInstance
-import com.netflix.scheduledactions.ActionSupport
-import com.netflix.scheduledactions.Context
-import com.netflix.scheduledactions.CronTrigger
-import com.netflix.scheduledactions.DaoConfigurer
-import com.netflix.scheduledactions.Execution
-import com.netflix.scheduledactions.Status
-import com.netflix.scheduledactions.TriggeredActionsOperator
 import com.netflix.scheduledactions.exceptions.ExecutionException
 import com.netflix.scheduledactions.executors.BlockingThreadPoolLocalExecutor
 import com.netflix.scheduledactions.persistence.InMemoryExecutionDao
@@ -18,11 +10,11 @@ import spock.lang.Specification
  *
  * @author sthadeshwar
  */
-class ActionOperatorSpec extends Specification {
+class ActionsOperatorSpec extends Specification {
 
     @Shared DaoConfigurer daoConfigurer = new DaoConfigurer(new InMemoryActionInstanceDao(), new InMemoryTriggerDao())
     @Shared int threadPoolSize = 10     // Adjust this as per the number of tests
-    @Shared TriggeredActionsOperator actionOperator = TriggeredActionsOperator.getInstance(daoConfigurer,
+    @Shared ActionsOperator actionsOperator = ActionsOperator.getInstance(daoConfigurer,
         new BlockingThreadPoolLocalExecutor(new InMemoryExecutionDao(), threadPoolSize), threadPoolSize)
 
     static class WaitAction extends ActionSupport {
@@ -45,10 +37,10 @@ class ActionOperatorSpec extends Specification {
 
     void 'test register action instance without action class throws exception'() {
         setup:
-        ActionInstance actionInstance = ActionInstance.newActionInstance().withName('testRegisterActionInstance').withGroup('ActionOperatorSpec').build()
+        ActionInstance actionInstance = ActionInstance.newActionInstance().withName('testRegisterActionInstance').withGroup('ActionsOperatorSpec').build()
 
         when:
-        actionOperator.registerActionInstance(actionInstance)
+        actionsOperator.registerActionInstance(actionInstance)
 
         then:
         thrown(IllegalArgumentException)
@@ -56,10 +48,10 @@ class ActionOperatorSpec extends Specification {
 
     void 'test register action instance without name throws exception'() {
         setup:
-        ActionInstance actionInstance = ActionInstance.newActionInstance().withAction(WaitAction.class).withGroup('ActionOperatorSpec').build()
+        ActionInstance actionInstance = ActionInstance.newActionInstance().withAction(WaitAction.class).withGroup('ActionsOperatorSpec').build()
 
         when:
-        actionOperator.registerActionInstance(actionInstance)
+        actionsOperator.registerActionInstance(actionInstance)
 
         then:
         thrown(IllegalArgumentException)
@@ -70,8 +62,8 @@ class ActionOperatorSpec extends Specification {
         ActionInstance actionInstance = ActionInstance.newActionInstance().withName('registerActionInstanceWithoutGroup').withAction(WaitAction.class).build()
 
         when:
-        String actionInstanceId = actionOperator.registerActionInstance(actionInstance)
-        ActionInstance regActionInstance = actionOperator.getActionInstance(actionInstanceId)
+        String actionInstanceId = actionsOperator.registerActionInstance(actionInstance)
+        ActionInstance regActionInstance = actionsOperator.getActionInstance(actionInstanceId)
 
         then:
         regActionInstance != null
@@ -83,15 +75,15 @@ class ActionOperatorSpec extends Specification {
         ActionInstance actionInstance = ActionInstance.newActionInstance().withName('deleteActionInstance').withAction(WaitAction.class).build()
 
         when:
-        String actionInstanceId = actionOperator.registerActionInstance(actionInstance)
-        ActionInstance regActionInstance = actionOperator.getActionInstance(actionInstanceId)
+        String actionInstanceId = actionsOperator.registerActionInstance(actionInstance)
+        ActionInstance regActionInstance = actionsOperator.getActionInstance(actionInstanceId)
 
         then:
         regActionInstance != null
 
         when:
-        actionOperator.deleteActionInstance(regActionInstance.id)
-        ActionInstance delActionInstance = actionOperator.getActionInstance(regActionInstance.id)
+        actionsOperator.deleteActionInstance(regActionInstance.id)
+        ActionInstance delActionInstance = actionsOperator.getActionInstance(regActionInstance.id)
 
         then:
         delActionInstance == null
@@ -107,8 +99,8 @@ class ActionOperatorSpec extends Specification {
             .build()
 
         when:
-        String actionInstanceId = actionOperator.registerActionInstance(actionInstance)
-        Execution execution = actionOperator.execute(actionInstanceId)
+        String actionInstanceId = actionsOperator.registerActionInstance(actionInstance)
+        Execution execution = actionsOperator.execute(actionInstanceId)
 
         then:
         execution != null
@@ -123,7 +115,7 @@ class ActionOperatorSpec extends Specification {
         actionInstance.disabled == false
 
         when:
-        List<Execution> executions = actionOperator.getExecutions(actionInstanceId)
+        List<Execution> executions = actionsOperator.getExecutions(actionInstanceId)
 
         then:
         executions != null && executions.find { it.id == execution.id } != null
@@ -144,9 +136,9 @@ class ActionOperatorSpec extends Specification {
             .build()
 
         when:
-        String actionInstanceId = actionOperator.registerActionInstance(actionInstance)
-        actionOperator.disableActionInstance(actionInstanceId)
-        actionOperator.execute(actionInstance)
+        String actionInstanceId = actionsOperator.registerActionInstance(actionInstance)
+        actionsOperator.disableActionInstance(actionInstanceId)
+        actionsOperator.execute(actionInstance)
 
         then:
         thrown(ExecutionException)
@@ -164,8 +156,8 @@ class ActionOperatorSpec extends Specification {
             .build()
 
         when:
-        actionOperator.registerActionInstance(actionInstance)
-        Execution execution = actionOperator.execute(actionInstance)
+        actionsOperator.registerActionInstance(actionInstance)
+        Execution execution = actionsOperator.execute(actionInstance)
 
         then:
         execution != null
@@ -191,8 +183,8 @@ class ActionOperatorSpec extends Specification {
             .build()
 
         when:
-        actionOperator.registerActionInstance(actionInstance)
-        Execution execution = actionOperator.execute(actionInstance)
+        actionsOperator.registerActionInstance(actionInstance)
+        Execution execution = actionsOperator.execute(actionInstance)
 
         then:
         execution != null
@@ -217,8 +209,8 @@ class ActionOperatorSpec extends Specification {
             .build()
 
         when:
-        String actionInstanceId = actionOperator.registerActionInstance(actionInstance)
-        Execution execution = actionOperator.execute(actionInstanceId)
+        String actionInstanceId = actionsOperator.registerActionInstance(actionInstance)
+        Execution execution = actionsOperator.execute(actionInstanceId)
 
         then:
         execution != null
@@ -230,7 +222,7 @@ class ActionOperatorSpec extends Specification {
         execution.status == Status.IN_PROGRESS
 
         when:
-        actionOperator.cancel(execution.id)
+        actionsOperator.cancel(execution.id)
         execution = pollExecutionUntil(execution, Status.CANCELLED, 5)
 
         then:
@@ -250,9 +242,9 @@ class ActionOperatorSpec extends Specification {
             .build()
 
         when:
-        String actionInstanceId = actionOperator.registerActionInstance(actionInstance)
-        Execution execution1 = actionOperator.execute(actionInstanceId)
-        Execution execution2 = actionOperator.execute(actionInstanceId)
+        String actionInstanceId = actionsOperator.registerActionInstance(actionInstance)
+        Execution execution1 = actionsOperator.execute(actionInstanceId)
+        Execution execution2 = actionsOperator.execute(actionInstanceId)
 
         then:
         execution1 != null
@@ -282,9 +274,9 @@ class ActionOperatorSpec extends Specification {
             .build()
 
         when:
-        String actionInstanceId = actionOperator.registerActionInstance(actionInstance)
-        Execution execution1 = actionOperator.execute(actionInstanceId)
-        Execution execution2 = actionOperator.execute(actionInstanceId)
+        String actionInstanceId = actionsOperator.registerActionInstance(actionInstance)
+        Execution execution1 = actionsOperator.execute(actionInstanceId)
+        Execution execution2 = actionsOperator.execute(actionInstanceId)
 
         then:
         execution1 != null
@@ -326,9 +318,9 @@ class ActionOperatorSpec extends Specification {
             .build()
 
         when:
-        String actionInstanceId = actionOperator.registerActionInstance(actionInstance)
-        Execution execution1 = actionOperator.execute(actionInstanceId)
-        Execution execution2 = actionOperator.execute(actionInstanceId)
+        String actionInstanceId = actionsOperator.registerActionInstance(actionInstance)
+        Execution execution1 = actionsOperator.execute(actionInstanceId)
+        Execution execution2 = actionsOperator.execute(actionInstanceId)
 
         then:
         execution1 != null
@@ -336,8 +328,8 @@ class ActionOperatorSpec extends Specification {
 
         when:
         Thread.sleep(20*1000L)
-        execution1 = actionOperator.getExecution(execution1.id)
-        execution2 = actionOperator.getExecution(execution2.id)
+        execution1 = actionsOperator.getExecution(execution1.id)
+        execution2 = actionsOperator.getExecution(execution2.id)
 
         then:
         execution1.status == Status.CANCELLED
@@ -346,7 +338,7 @@ class ActionOperatorSpec extends Specification {
 
     void 'a failed action execution should not affect the next action execution'() {
         setup:
-        actionOperator.initialize()
+        actionsOperator.initialize()
         ActionInstance actionInstance = ActionInstance.newActionInstance()
             .withName('failedActionInstance')
             .withAction(FailingAction.class)
@@ -354,7 +346,7 @@ class ActionOperatorSpec extends Specification {
             .build()
 
         when:
-        String actionInstanceId = actionOperator.registerActionInstance(actionInstance)
+        String actionInstanceId = actionsOperator.registerActionInstance(actionInstance)
 
         then:
         actionInstanceId != null
@@ -373,7 +365,7 @@ class ActionOperatorSpec extends Specification {
         Execution updated = execution
         try {
             while (--timeoutInSeconds >= 0) {
-                updated = actionOperator.getExecution(execution.id)
+                updated = actionsOperator.getExecution(execution.id)
                 if (updated.status == expectedStatus) break
                 else Thread.sleep(1000L)
             }
@@ -385,7 +377,7 @@ class ActionOperatorSpec extends Specification {
         List<Execution> executions
         try {
             while (--timeoutInSeconds >= 0) {
-                executions = actionOperator.getExecutions(actionInstanceId)
+                executions = actionsOperator.getExecutions(actionInstanceId)
                 if (executions.size() >= count) break
                 else Thread.sleep(1000L)
             }

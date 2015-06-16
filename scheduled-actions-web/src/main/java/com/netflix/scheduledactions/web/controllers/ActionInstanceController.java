@@ -17,7 +17,7 @@
 package com.netflix.scheduledactions.web.controllers;
 
 import com.netflix.scheduledactions.ActionInstance;
-import com.netflix.scheduledactions.TriggeredActionsOperator;
+import com.netflix.scheduledactions.ActionsOperator;
 import com.netflix.scheduledactions.Execution;
 import com.netflix.scheduledactions.exceptions.ExecutionNotFoundException;
 import com.netflix.scheduledactions.exceptions.ActionInstanceNotFoundException;
@@ -32,59 +32,59 @@ import java.util.List;
  * @author sthadeshwar
  */
 @RestController
-@ConditionalOnBean(TriggeredActionsOperator.class)
+@ConditionalOnBean(ActionsOperator.class)
 public class ActionInstanceController {
 
     @Autowired
-    TriggeredActionsOperator triggeredActionsOperator;
+    ActionsOperator actionsOperator;
 
     @RequestMapping(value = "/registerActionInstance", method = RequestMethod.POST)
     public String registerActionInstance(@RequestBody ActionInstance actionInstance) {
-        return triggeredActionsOperator.registerActionInstance(actionInstance);
+        return actionsOperator.registerActionInstance(actionInstance);
     }
 
     @RequestMapping(value = "/actions/{id}/execute", method = RequestMethod.POST)
     public Execution executeAction(@PathVariable String id) throws ActionInstanceNotFoundException {
-        return triggeredActionsOperator.execute(id);
+        return actionsOperator.execute(id);
     }
 
     @RequestMapping(value = "/actions/executions/{id}/cancel", method = RequestMethod.POST)
     public void cancelExecution(@PathVariable String id) throws ActionInstanceNotFoundException, ExecutionNotFoundException {
-        triggeredActionsOperator.cancel(id);
+        actionsOperator.cancel(id);
     }
 
     @RequestMapping(value = "/actions", method = RequestMethod.GET)
     public List<ActionInstance> actionInstances(@RequestParam String actionInstanceGroup) {
-        return triggeredActionsOperator.getActionInstances(actionInstanceGroup);
+        return actionsOperator.getActionInstances(actionInstanceGroup);
     }
 
     @RequestMapping(value = "/actions/{id}", method = RequestMethod.GET)
     public ActionInstance actionInstance(@PathVariable String id) {
-        return triggeredActionsOperator.getActionInstance(id);
+        return actionsOperator.getActionInstance(id);
     }
 
     @RequestMapping(value = "/actions/{id}/executions", method = RequestMethod.GET)
     public List<Execution> executions(@PathVariable String id) {
-        return triggeredActionsOperator.getExecutions(id);
+        return actionsOperator.getExecutions(id);
     }
 
     @RequestMapping(value = "/actions/executions/{id}", method = RequestMethod.GET)
     public Execution execution(@PathVariable String id) {
-        return triggeredActionsOperator.getExecution(id);
+        return actionsOperator.getExecution(id);
     }
 
     @RequestMapping(value = "/actions/{id}/disable", method = RequestMethod.PUT)
     public void disableActionInstance(@PathVariable String id) throws ActionInstanceNotFoundException {
-        triggeredActionsOperator.disableActionInstance(id);
+        actionsOperator.disableActionInstance(id);
     }
 
     @RequestMapping(value = "/actions/{id}/enable", method = RequestMethod.PUT)
     public void enableActionInstance(@PathVariable String id) throws ActionInstanceNotFoundException {
-        triggeredActionsOperator.enableActionInstance(id);
+        actionsOperator.enableActionInstance(id);
     }
 
     @RequestMapping(value = "/actions/{id}/delete", method = RequestMethod.DELETE)
     public void deleteActionInstance(@PathVariable String id) throws ActionInstanceNotFoundException {
-        triggeredActionsOperator.deleteActionInstance(id);
+        actionsOperator.deleteActionInstance(id);
     }
 }
