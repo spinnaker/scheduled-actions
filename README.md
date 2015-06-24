@@ -129,7 +129,7 @@ ActionInstance actionInstance = ActionInstance.newActionInstance()
     .withName("Process Items")
     .withGroup("MyApplication")
     .withAction(MyAction.class)
-    .withConcurrentExecutionStrategy(ActionInstance.ConcurrentExecutionStrategy.ALLOW)
+    .withConcurrentExecutionStrategy(ConcurrentExecutionStrategy.ALLOW)
     .build();
 ```
 #### 3. Create an ActionsOperator instance ####
