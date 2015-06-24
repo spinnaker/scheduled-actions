@@ -182,9 +182,7 @@ you can use ```ActionsOperator``` to execute the ```ActionInstance``` as well
 
 ```java
 actionsOperator.execute(actionInstance);
-```
 OR
-```java
 actionsOperator.execute(actionInstanceId);
 ```
 
@@ -194,9 +192,7 @@ A best case attempt will be made to cancel the execution by causing an ```Interr
 
 ```java
 actionsOperator.cancel(execution);
-```
-OR
-```java
+// OR
 actionsOperator.cancel(executionId);
 ```
 
