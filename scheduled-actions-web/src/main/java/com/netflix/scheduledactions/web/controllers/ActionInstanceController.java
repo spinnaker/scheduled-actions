@@ -23,6 +23,7 @@ import com.netflix.scheduledactions.exceptions.ExecutionNotFoundException;
 import com.netflix.scheduledactions.exceptions.ActionInstanceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,53 +39,59 @@ public class ActionInstanceController {
     @Autowired
     ActionsOperator actionsOperator;
 
-    @RequestMapping(value = "/registerActionInstance", method = RequestMethod.POST)
-    public String registerActionInstance(@RequestBody ActionInstance actionInstance) {
+    @RequestMapping(value = "/scheduledActions", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createActionInstance(@RequestBody ActionInstance actionInstance) {
         return actionsOperator.registerActionInstance(actionInstance);
     }
 
-    @RequestMapping(value = "/actions/{id}/execute", method = RequestMethod.POST)
+    @RequestMapping(value = "/scheduledActions/{id}/execute", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public Execution executeAction(@PathVariable String id) throws ActionInstanceNotFoundException {
         return actionsOperator.execute(id);
     }
 
-    @RequestMapping(value = "/actions/executions/{id}/cancel", method = RequestMethod.POST)
-    public void cancelExecution(@PathVariable String id) throws ActionInstanceNotFoundException, ExecutionNotFoundException {
-        actionsOperator.cancel(id);
+    @RequestMapping(value = "/scheduledActions/{id}/disable", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ActionInstance disableActionInstance(@PathVariable String id) throws ActionInstanceNotFoundException {
+        return actionsOperator.disableActionInstance(id);
     }
 
-    @RequestMapping(value = "/actions", method = RequestMethod.GET)
+    @RequestMapping(value = "/scheduledActions/{id}/enable", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ActionInstance enableActionInstance(@PathVariable String id) throws ActionInstanceNotFoundException {
+        return actionsOperator.enableActionInstance(id);
+    }
+
+    @RequestMapping(value = "/scheduledActions", method = RequestMethod.GET)
     public List<ActionInstance> actionInstances(@RequestParam String actionInstanceGroup) {
         return actionsOperator.getActionInstances(actionInstanceGroup);
     }
 
-    @RequestMapping(value = "/actions/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/scheduledActions/{id}", method = RequestMethod.GET)
     public ActionInstance actionInstance(@PathVariable String id) {
         return actionsOperator.getActionInstance(id);
     }
 
-    @RequestMapping(value = "/actions/{id}/executions", method = RequestMethod.GET)
+    @RequestMapping(value = "/scheduledActions/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ActionInstance deleteActionInstance(@PathVariable String id) throws ActionInstanceNotFoundException {
+        return actionsOperator.deleteActionInstance(id);
+    }
+
+    @RequestMapping(value = "/scheduledActions/{id}/executions", method = RequestMethod.GET)
     public List<Execution> executions(@PathVariable String id) {
         return actionsOperator.getExecutions(id);
     }
 
-    @RequestMapping(value = "/actions/executions/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/scheduledActions/executions/{id}", method = RequestMethod.GET)
     public Execution execution(@PathVariable String id) {
         return actionsOperator.getExecution(id);
     }
 
-    @RequestMapping(value = "/actions/{id}/disable", method = RequestMethod.PUT)
-    public void disableActionInstance(@PathVariable String id) throws ActionInstanceNotFoundException {
-        actionsOperator.disableActionInstance(id);
-    }
-
-    @RequestMapping(value = "/actions/{id}/enable", method = RequestMethod.PUT)
-    public void enableActionInstance(@PathVariable String id) throws ActionInstanceNotFoundException {
-        actionsOperator.enableActionInstance(id);
-    }
-
-    @RequestMapping(value = "/actions/{id}/delete", method = RequestMethod.DELETE)
-    public void deleteActionInstance(@PathVariable String id) throws ActionInstanceNotFoundException {
-        actionsOperator.deleteActionInstance(id);
+    @RequestMapping(value = "/scheduledActions/executions/{id}/cancel", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void cancelExecution(@PathVariable String id) throws ActionInstanceNotFoundException, ExecutionNotFoundException {
+        actionsOperator.cancel(id);
     }
 }

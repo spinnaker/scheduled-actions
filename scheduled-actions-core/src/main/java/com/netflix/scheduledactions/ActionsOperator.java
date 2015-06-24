@@ -109,13 +109,11 @@ public class ActionsOperator {
 
         if (actionInstance.getTrigger() != null) {
             actionInstance.setFenzoTrigger(actionInstance.getTrigger().createFenzoTrigger(context, InternalAction.class));
-            if (actionInstance.getFenzoTrigger() != null) {
-                try {
-                    triggerOperator.registerTrigger(actionInstance.getGroup(), actionInstance.getFenzoTrigger());
-                } catch (SchedulerException e) {
-                    throw new ActionOperationException(String.format(
-                      "Exception occurred while registering actionInstance %s", actionInstance), e);
-                }
+            try {
+                triggerOperator.registerTrigger(actionInstance.getGroup(), actionInstance.getFenzoTrigger());
+            } catch (SchedulerException e) {
+                throw new ActionOperationException(String.format(
+                    "Exception occurred while registering actionInstance %s", actionInstance), e);
             }
         }
 
@@ -161,13 +159,14 @@ public class ActionsOperator {
      * @throws ActionInstanceNotFoundException
      * @throws com.netflix.scheduledactions.exceptions.ActionOperationException
      */
-    public void disableActionInstance(String actionInstanceId) throws ActionInstanceNotFoundException {
+    public ActionInstance disableActionInstance(String actionInstanceId) throws ActionInstanceNotFoundException {
         ActionInstance actionInstance = getActionInstance(actionInstanceId);
         if (actionInstance != null) {
             disableActionInstance(actionInstance);
         } else {
             throw new ActionInstanceNotFoundException("No actionInstance found with actionInstance id: " + actionInstanceId);
         }
+        return actionInstance;
     }
 
     /**
@@ -196,13 +195,14 @@ public class ActionsOperator {
      * @throws ActionInstanceNotFoundException
      * @throws com.netflix.scheduledactions.exceptions.ActionOperationException
      */
-    public void enableActionInstance(String actionInstanceId) throws ActionInstanceNotFoundException {
+    public ActionInstance enableActionInstance(String actionInstanceId) throws ActionInstanceNotFoundException {
         ActionInstance actionInstance = getActionInstance(actionInstanceId);
         if (actionInstance != null) {
             enableActionInstance(actionInstance);
         } else {
             throw new ActionInstanceNotFoundException("No actionInstance found with actionInstance id: " + actionInstanceId);
         }
+        return actionInstance;
     }
 
     /**
@@ -231,13 +231,14 @@ public class ActionsOperator {
      * @throws ActionInstanceNotFoundException
      * @throws com.netflix.scheduledactions.exceptions.ActionOperationException
      */
-    public void deleteActionInstance(String actionInstanceId) throws ActionInstanceNotFoundException {
+    public ActionInstance deleteActionInstance(String actionInstanceId) throws ActionInstanceNotFoundException {
         ActionInstance actionInstance = getActionInstance(actionInstanceId);
         if (actionInstance != null) {
             deleteActionInstance(actionInstance);
         } else {
             throw new ActionInstanceNotFoundException("No actionInstance found with actionInstance id: " + actionInstanceId);
         }
+        return actionInstance;
     }
 
     /**

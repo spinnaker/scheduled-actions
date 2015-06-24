@@ -119,4 +119,38 @@ class ActionInstanceSpec extends ModelSpec {
         deserializedActionInstance.fenzoTrigger != null
         deserializedActionInstance.fenzoTrigger instanceof com.netflix.fenzo.triggers.CronTrigger
     }
+
+    void 'serialization from json should work fine'() {
+        setup:
+        String json = '{\n' +
+            '  "name": "TestAction",\n' +
+            '  "action": "com.netflix.scheduledactions.ActionInstanceSpec$TestAction",\n' +
+            '  "parameters": {\n' +
+            '    "foo": "bar"\n' +
+            '  },\n' +
+            '  "trigger": {\n' +
+            '    "@class": "com.netflix.scheduledactions.CronTrigger",\n' +
+            '    "cronExpression": "0 0/10 * * * ? *"\n' +
+            '  },\n' +
+            '  "owners": [\n' +
+            '    "sthadeshwar@netflix.com"\n' +
+            '  ],\n' +
+            '  "watchers": [\n' +
+            '    "sthadeshwar@netflix.com"\n' +
+            '  ],\n' +
+            '  "executionTimeoutInSeconds": 20\n' +
+            '}'
+
+        when:
+        ActionInstance deserializedActionInstance = objectMapper.readValue(json, ActionInstance.class)
+
+        then:
+        noExceptionThrown()
+        deserializedActionInstance != null
+        deserializedActionInstance.name == 'TestAction'
+        deserializedActionInstance.action == TestAction
+        deserializedActionInstance.trigger != null
+        deserializedActionInstance.trigger instanceof CronTrigger
+        ((CronTrigger) deserializedActionInstance.trigger).cronExpression == '0 0/10 * * * ? *'
+    }
 }

@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class ActionInstance {
 
-    public enum ConcurrentExecutionStrategy {
+    public static enum ConcurrentExecutionStrategy {
         ALLOW("ALLOW"),
         REJECT("REJECT"),
         REPLACE("REPLACE");
