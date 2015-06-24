@@ -1,5 +1,7 @@
 package com.netflix.scheduledactions;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -8,17 +10,13 @@ import java.util.Map;
 /**
  * @author sthadeshwar
  */
+@JsonDeserialize(builder = ActionInstance.Builder.class)
 public class ActionInstance {
 
-    public static enum ConcurrentExecutionStrategy {
-        ALLOW("ALLOW"),
-        REJECT("REJECT"),
-        REPLACE("REPLACE");
-
-        private final String strategy;
-        ConcurrentExecutionStrategy(String strategy) { this.strategy = strategy; }
-        public String getStrategy() { return strategy; }
-    }
+    public static final String DEFAULT_GROUP = "DEFAULT_GROUP";
+    public static final Class<? extends ExecutionListener> DEFAULT_EXECUTION_LISTENER_CLASS = NoOpExecutionListener.class;
+    public static final long DEFAULT_EXECUTION_TIMEOUT = -1L;
+    public static final ConcurrentExecutionStrategy DEFAULT_EXECUTION_STRATEGY = ConcurrentExecutionStrategy.REJECT;
 
     private String id;
     private String name;
@@ -39,17 +37,21 @@ public class ActionInstance {
     private ActionInstance() {}
 
     private ActionInstance(Builder builder) {
+        this.id = builder.id;
         this.name = builder.name;
         this.group = builder.group;
         this.action = builder.action;
+        this.executionListener = builder.executionListener;
         this.parameters = builder.parameters;
         this.trigger = builder.trigger;
+        this.fenzoTrigger = builder.fenzoTrigger;
         this.owners = builder.owners;
         this.watchers = builder.watchers;
-        this.executionListener = builder.executionListener;
+        this.disabled = builder.disabled;
+        this.lastUpdated = builder.lastUpdated;
         this.executionTimeoutInSeconds = builder.executionTimeoutInSeconds;
         this.concurrentExecutionStrategy = builder.concurrentExecutionStrategy;
-        this.lastUpdated = new Date();
+        this.context = builder.context;
     }
 
     public String getId() {
@@ -80,7 +82,7 @@ public class ActionInstance {
         return action;
     }
 
-    public void setAction(Class<? extends Action> action) {
+    void setAction(Class<? extends Action> action) {
         this.action = action;
     }
 
@@ -88,7 +90,7 @@ public class ActionInstance {
         return parameters;
     }
 
-    public void setParameters(Map<String, String> parameters) {
+    void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
     }
 
@@ -104,7 +106,7 @@ public class ActionInstance {
         return owners;
     }
 
-    public void setOwners(List<String> owners) {
+    void setOwners(List<String> owners) {
         this.owners = owners;
     }
 
@@ -112,7 +114,7 @@ public class ActionInstance {
         return watchers;
     }
 
-    public void setWatchers(List<String> watchers) {
+    void setWatchers(List<String> watchers) {
         this.watchers = watchers;
     }
 
@@ -120,7 +122,7 @@ public class ActionInstance {
         return executionListener;
     }
 
-    public void setExecutionListener(Class<? extends ExecutionListener> executionListener) {
+    void setExecutionListener(Class<? extends ExecutionListener> executionListener) {
         this.executionListener = executionListener;
     }
 
@@ -136,7 +138,7 @@ public class ActionInstance {
         return executionTimeoutInSeconds;
     }
 
-    public void setExecutionTimeoutInSeconds(long executionTimeoutInSeconds) {
+    void setExecutionTimeoutInSeconds(long executionTimeoutInSeconds) {
         this.executionTimeoutInSeconds = executionTimeoutInSeconds;
     }
 
@@ -144,7 +146,7 @@ public class ActionInstance {
         return concurrentExecutionStrategy;
     }
 
-    public void setConcurrentExecutionStrategy(ConcurrentExecutionStrategy concurrentExecutionStrategy) {
+    void setConcurrentExecutionStrategy(ConcurrentExecutionStrategy concurrentExecutionStrategy) {
         this.concurrentExecutionStrategy = concurrentExecutionStrategy;
     }
 
@@ -152,7 +154,7 @@ public class ActionInstance {
         return lastUpdated;
     }
 
-    public void setLastUpdated(Date lastUpdated) {
+    void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
@@ -164,11 +166,11 @@ public class ActionInstance {
         return context;
     }
 
-    public com.netflix.fenzo.triggers.Trigger<Context> getFenzoTrigger() {
+    com.netflix.fenzo.triggers.Trigger<Context> getFenzoTrigger() {
         return fenzoTrigger;
     }
 
-    public void setFenzoTrigger(com.netflix.fenzo.triggers.Trigger<Context> fenzoTrigger) {
+    void setFenzoTrigger(com.netflix.fenzo.triggers.Trigger<Context> fenzoTrigger) {
         this.fenzoTrigger = fenzoTrigger;
     }
 
@@ -186,16 +188,21 @@ public class ActionInstance {
     }
 
     public static class Builder {
+        private String id;
         private String name;
-        private String group = "DEFAULT_GROUP";
+        private String group = DEFAULT_GROUP;
         private Class<? extends Action> action;
+        private Class<? extends ExecutionListener> executionListener = DEFAULT_EXECUTION_LISTENER_CLASS;
         private Map<String, String> parameters;
         private Trigger trigger;
+        private com.netflix.fenzo.triggers.Trigger<Context> fenzoTrigger;
         private List<String> owners;
         private List<String> watchers;
-        private Class<? extends ExecutionListener> executionListener = NoOpExecutionListener.class;
-        private long executionTimeoutInSeconds = -1L;
-        private ConcurrentExecutionStrategy concurrentExecutionStrategy = ConcurrentExecutionStrategy.REJECT;
+        private boolean disabled;
+        private Date lastUpdated = new Date();
+        private long executionTimeoutInSeconds = DEFAULT_EXECUTION_TIMEOUT;
+        private ConcurrentExecutionStrategy concurrentExecutionStrategy = DEFAULT_EXECUTION_STRATEGY;
+        private Context context;
 
         private Builder() {}
 

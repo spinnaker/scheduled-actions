@@ -24,12 +24,33 @@ Following are the two artifacts:
 | com.netflix.scheduledactions  | scheduled-actions-cassandra   | No       | Provides cassandra persistence for ActionInstance, Execution, etc. |
 | com.netflix.scheduledactions  | scheduled-actions-web         | No       | Provides spring REST controller to access the ```ActionsOperator``` |
 
+Download instructions for gradle:
+
+```groovy
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "com.netflix.scheduledactions:${artifactId}:${version}" // For example: compile "com.netflix.scheduledactions:scheduled-actions-core:0.3"
+}
+```
+
 Usage
 =
 
 ```com.netflix.scheduledactions.ActionsOperator``` is the primary class for registering, enabling, disabling, executing and cancelling ```ActionInstance```s.
 
-#### Implement an Action ####
+At a high level, users need to follow below steps to use this library:
+
+1. Implement an action
+2. Create an ActionInstance
+3. Create an ActionsOperator instance
+4. Register the ActionInstance with ActionsOperator
+
+Details and sample code for each step is explained below:
+
+#### 1. Implement an Action ####
 
 Create an action by either implementing ```Action``` interface or by extending ```ActionSupport``` class
 
@@ -45,7 +66,7 @@ public class MyAction extends ActionSupport {
 }
 ```
 
-#### Create an ActionInstance ####
+#### 2. Create an ActionInstance ####
 
 ```ActionInstance``` provides a builder to create an action instance
 
@@ -111,8 +132,32 @@ ActionInstance actionInstance = ActionInstance.newActionInstance()
     .withConcurrentExecutionStrategy(ActionInstance.ConcurrentExecutionStrategy.ALLOW)
     .build();
 ```
+#### 3. Create an ActionsOperator instance ####
 
-#### Register the ActionInstance with ActionsOperator ####
+For creating an instance of ActionsOperator, use the static factory method in ActionsOperator class
+
+```java
+ActionsOperator.getInstance(...);
+```
+
+The getInstance() method above takes following parameters:
+
+1. DaoConfigurer - a DAO implementations holder class. If using ```scheduled-actions-cassandra``` library, then the Cassandra DAO implementations
+can be used. If not, use the existing InMemoryXXXDao implementations
+2. Executor - an implementation of ```com.netflix.scheduledactions.executors.Executor``` interface. Use the ```com.netflix.scheduledactions.executors.ExecutorFactory```
+to get an executor
+3. int - the size of the scheduler thread pool
+
+So, assuming the ```scheduled-actions-cassandra``` library is being used, below is the sample code for creating an ActionsOperator instance
+
+```java
+Keyspace keyspace = <Astyanax keyspace instance>
+DaoConfigurer daoConfigurer = new DaoConfigurer(new CassandraActionInstanceDao(keyspace), new CassandraTriggerDao(keyspace))
+Executor executor = ExecutorFactory.getDefaultExecutor(new CassandraExecutionDao(keyspace), 20)     // 20 is the thread pool size for the executor
+ActionsOperator actionsOperator = ActionsOperator.getInstance(daoConfigurer, executor, 20)
+```
+
+#### 4. Register the ActionInstance with ActionsOperator ####
 
 Once you have a ```ActionInstance```, you can register it with the ```ActionsOperator```
 
@@ -120,7 +165,17 @@ Once you have a ```ActionInstance```, you can register it with the ```ActionsOpe
 ActionsOperator actionsOperator = ActionsOperator.getInstance();
 actionsOperator.registerActionInstance(actionInstance);
 ```
-#### Execute the action ####
+
+Other Features
+=
+
+#### Vew action execution history ####
+
+```java
+List<Execution> executions = actionsOperator.getExecutions(actionInstance.getId());
+```
+
+#### Ad-hoc execution of the action ####
 
 If you want to execute your ```Action``` apart from being executed by the ```Trigger``` (if ```ActionInstance``` is created with a trigger), then
 you can use ```ActionsOperator``` to execute the ```ActionInstance``` as well
@@ -133,14 +188,9 @@ OR
 actionsOperator.execute(actionInstanceId);
 ```
 
-
-#### Vew action execution history ####
-
-```java
-List<Execution> executions = actionsOperator.getExecutions(actionInstance.getId());
-```
-
 #### Cancel an action execution ####
+
+A best case attempt will be made to cancel the execution by causing an ```InterruptedException``` to the ```Executor``` thread
 
 ```java
 actionsOperator.cancel(execution);

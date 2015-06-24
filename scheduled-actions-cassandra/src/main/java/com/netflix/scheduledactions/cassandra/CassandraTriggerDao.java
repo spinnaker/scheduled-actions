@@ -13,8 +13,8 @@ import java.util.*;
  */
 public class CassandraTriggerDao extends AbstractCassandraDao<Trigger> implements TriggerDao {
 
-    public CassandraTriggerDao(Keyspace keyspace, ObjectMapper objectMapper) {
-        super(keyspace, objectMapper);
+    public CassandraTriggerDao(Keyspace keyspace) {
+        super(keyspace, new ScheduledActionsObjectMapper());
     }
 
     @Override

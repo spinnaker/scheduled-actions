@@ -372,7 +372,7 @@ public class ActionsOperator {
         executionDao.createExecution(actionInstance.getId(), execution);
 
         if (hasInCompleteExecutionsBefore(actionInstance.getId(), execution)) {
-            ActionInstance.ConcurrentExecutionStrategy strategy = actionInstance.getConcurrentExecutionStrategy();
+            ConcurrentExecutionStrategy strategy = actionInstance.getConcurrentExecutionStrategy();
             switch (strategy) {
                 case ALLOW:
                     logger.info("ActionInstance {} concurrent execution strategy is: ALLOW - creating execution", actionInstance);

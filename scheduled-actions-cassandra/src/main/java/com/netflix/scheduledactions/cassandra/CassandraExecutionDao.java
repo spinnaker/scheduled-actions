@@ -15,11 +15,10 @@
  */
 
 package com.netflix.scheduledactions.cassandra;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.astyanax.Keyspace;
 import com.netflix.astyanax.connectionpool.exceptions.NotFoundException;
 import com.netflix.scheduledactions.Execution;
 import com.netflix.scheduledactions.persistence.ExecutionDao;
-import com.netflix.astyanax.Keyspace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +31,8 @@ import java.util.UUID;
  */
 public class CassandraExecutionDao extends AbstractCassandraDao<Execution> implements ExecutionDao {
 
-    public CassandraExecutionDao(Keyspace keyspace, ObjectMapper objectMapper) {
-        super(keyspace, objectMapper);
+    public CassandraExecutionDao(Keyspace keyspace) {
+        super(keyspace, new ScheduledActionsObjectMapper());
     }
 
     @Override

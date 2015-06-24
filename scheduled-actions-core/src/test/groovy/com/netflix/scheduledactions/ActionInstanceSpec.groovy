@@ -53,6 +53,8 @@ class ActionInstanceSpec extends ModelSpec {
         actionInstance.context = ActionInstance.createContext(actionInstance)
         com.netflix.fenzo.triggers.Trigger fenzoTrigger = actionInstance.getTrigger().createFenzoTrigger(actionInstance.context, TestAction1.class)
         actionInstance.setFenzoTrigger(fenzoTrigger)
+        actionInstance.setContext(ActionInstance.createContext(actionInstance))
+        actionInstance.setDisabled(true)
 
         when:
         byte[] bytes = objectMapper.writeValueAsBytes(actionInstance)
@@ -67,6 +69,7 @@ class ActionInstanceSpec extends ModelSpec {
         then:
         noExceptionThrown()
         deserializedActionInstance != null
+        deserializedActionInstance.id == actionInstance.id
         deserializedActionInstance.name == actionInstance.name
         deserializedActionInstance.group == actionInstance.group
         deserializedActionInstance.action == actionInstance.action
@@ -75,6 +78,9 @@ class ActionInstanceSpec extends ModelSpec {
         ((CronTrigger) deserializedActionInstance.trigger).cronExpression == cron
         deserializedActionInstance.fenzoTrigger != null
         deserializedActionInstance.fenzoTrigger instanceof com.netflix.fenzo.triggers.CronTrigger
+        deserializedActionInstance.context != null
+        deserializedActionInstance.disabled == true
+        deserializedActionInstance.lastUpdated != null
     }
 
     void 'serialize and deserialize for ActionInstance should not throw any exceptions'() {
@@ -96,6 +102,8 @@ class ActionInstanceSpec extends ModelSpec {
         actionInstance.context = ActionInstance.createContext(actionInstance)
         com.netflix.fenzo.triggers.Trigger fenzoTrigger = actionInstance.getTrigger().createFenzoTrigger(actionInstance.context, TestAction1.class)
         actionInstance.setFenzoTrigger(fenzoTrigger)
+        actionInstance.setContext(ActionInstance.createContext(actionInstance))
+        actionInstance.setDisabled(true)
 
         when:
         String bytes = objectMapper.writeValueAsString(actionInstance)
@@ -110,6 +118,7 @@ class ActionInstanceSpec extends ModelSpec {
         then:
         noExceptionThrown()
         deserializedActionInstance != null
+        deserializedActionInstance.id == actionInstance.id
         deserializedActionInstance.name == actionInstance.name
         deserializedActionInstance.group == actionInstance.group
         deserializedActionInstance.action == actionInstance.action
@@ -118,6 +127,9 @@ class ActionInstanceSpec extends ModelSpec {
         ((CronTrigger) deserializedActionInstance.trigger).cronExpression == cron
         deserializedActionInstance.fenzoTrigger != null
         deserializedActionInstance.fenzoTrigger instanceof com.netflix.fenzo.triggers.CronTrigger
+        deserializedActionInstance.context != null
+        deserializedActionInstance.disabled == true
+        deserializedActionInstance.lastUpdated != null
     }
 
     void 'serialization from json should work fine'() {
