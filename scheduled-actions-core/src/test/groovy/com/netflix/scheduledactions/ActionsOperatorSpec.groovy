@@ -270,7 +270,7 @@ class ActionsOperatorSpec extends Specification {
             .withName('actionInstance')
             .withAction(WaitAction.class)
             .withParameters(params)
-            .withConcurrentExecutionStrategy(ActionInstance.ConcurrentExecutionStrategy.ALLOW)
+            .withConcurrentExecutionStrategy(ConcurrentExecutionStrategy.ALLOW)
             .build()
 
         when:
@@ -314,7 +314,7 @@ class ActionsOperatorSpec extends Specification {
             .withName('actionInstance')
             .withAction(WaitAction.class)
             .withParameters(params)
-            .withConcurrentExecutionStrategy(ActionInstance.ConcurrentExecutionStrategy.REPLACE)
+            .withConcurrentExecutionStrategy(ConcurrentExecutionStrategy.REPLACE)
             .build()
 
         when:
