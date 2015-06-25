@@ -80,7 +80,7 @@ ActionInstance actionInstance = ActionInstance.newActionInstance()
     .build();
 ```
 
-A ```Trigger``` can be associated with a ```ActionInstance```
+A ```Trigger``` can be associated with an ```ActionInstance```
 
 ```java
 ActionInstance actionInstance = ActionInstance.newActionInstance()
@@ -98,6 +98,7 @@ ActionInstance actionInstance = ActionInstance.newActionInstance()
     .withName("Process Items")
     .withGroup("MyApplication")
     .withAction(MyAction.class)
+    .withTrigger(new CronTrigger("0 0 0/1 * * ?"))  // Run the action every hour
     .withExecutionTimeoutInSeconds(45*60L)  // Timeout after 45 minutes
     .build();
 ```
@@ -113,7 +114,9 @@ ActionInstance actionInstance = ActionInstance.newActionInstance()
     .withName("Process Items")
     .withGroup("MyApplication")
     .withAction(MyAction.class)
-    .withExecutionListener(new MyListener())
+    .withTrigger(new CronTrigger("0 0 0/1 * * ?"))  // Run the action every hour
+    .withExecutionTimeoutInSeconds(45*60L)  // Timeout after 45 minutes
+    .withExecutionListener(MyListener.class)
     .build();
 ```
 
@@ -129,6 +132,9 @@ ActionInstance actionInstance = ActionInstance.newActionInstance()
     .withName("Process Items")
     .withGroup("MyApplication")
     .withAction(MyAction.class)
+    .withTrigger(new CronTrigger("0 0 0/1 * * ?"))  // Run the action every hour
+    .withExecutionTimeoutInSeconds(45*60L)  // Timeout after 45 minutes
+    .withExecutionListener(MyListener.class)
     .withConcurrentExecutionStrategy(ConcurrentExecutionStrategy.ALLOW)
     .build();
 ```
