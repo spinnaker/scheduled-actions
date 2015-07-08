@@ -14,55 +14,47 @@
  * limitations under the License.
  */
 
-package com.netflix.scheduledactions.cassandra;
+package com.netflix.scheduledactions.persistence.cassandra;
 import com.netflix.astyanax.Keyspace;
-import com.netflix.astyanax.connectionpool.exceptions.NotFoundException;
 import com.netflix.scheduledactions.Execution;
 import com.netflix.scheduledactions.persistence.ExecutionDao;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
  *
  * @author sthadeshwar
  */
-public class CassandraExecutionDao extends AbstractCassandraDao<Execution> implements ExecutionDao {
+public class CassandraExecutionDao implements ExecutionDao {
+
+    private final CassandraDao<Execution> cassandraDao;
 
     public CassandraExecutionDao(Keyspace keyspace) {
-        super(keyspace, new ScheduledActionsObjectMapper());
+        this.cassandraDao = new ThriftCassandraDao(Execution.class, keyspace, new ScheduledActionsObjectMapper());
     }
 
     @Override
     public String createExecution(String actionInstanceId, Execution execution) {
-        execution.setId(createColumnName(actionInstanceId, UUID.randomUUID().toString()));
-        upsert(actionInstanceId, execution.getId(), execution);
+        execution.setId(UUID.randomUUID().toString());
+        cassandraDao.upsertToGroup(actionInstanceId, execution.getId(), execution);
         return execution.getId();
     }
 
     @Override
     public void updateExecution(Execution execution) {
-        String actionInstanceId = extractRowKeyFromColumnName(execution.getId());
-        upsert(actionInstanceId, execution.getId(), execution);
+        cassandraDao.upsert(execution.getId(), execution);
     }
 
     @Override
     public Execution getExecution(String executionId) {
-        String actionInstanceId = extractRowKeyFromColumnName(executionId);
-        try {
-            Map<String, Execution> executionMap = getColumn(actionInstanceId, executionId);
-            return executionMap.get(executionId);
-        } catch (NotFoundException nfe) {
-            return null;
-        }
+        return cassandraDao.get(executionId);
     }
 
     @Override
-    public void deleteExecution(Execution execution) {
-        String actionInstanceId = extractRowKeyFromColumnName(execution.getId());
-        delete(actionInstanceId, execution.getId());
+    public void deleteExecution(String actionInstanceId, Execution execution) {
+        cassandraDao.deleteFromGroup(actionInstanceId, execution.getId());
     }
 
     @Override
@@ -73,7 +65,7 @@ public class CassandraExecutionDao extends AbstractCassandraDao<Execution> imple
 
     @Override
     public List<Execution> getExecutions(String actionInstanceId) {
-      return new ArrayList<>(getRow(actionInstanceId).values());
+        return new ArrayList<>(cassandraDao.getGroup(actionInstanceId));
     }
 
 }

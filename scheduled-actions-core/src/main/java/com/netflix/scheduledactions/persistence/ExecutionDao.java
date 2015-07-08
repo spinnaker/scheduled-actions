@@ -15,7 +15,7 @@ public interface ExecutionDao {
 
     public Execution getExecution(String executionId);
 
-    public void deleteExecution(Execution execution);
+    public void deleteExecution(String actionInstanceId, Execution execution);
 
     public List<Execution> getExecutions(String actionInstanceId, int count);
 

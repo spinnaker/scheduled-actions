@@ -14,59 +14,56 @@
  * limitations under the License.
  */
 
-package com.netflix.scheduledactions.cassandra;
+package com.netflix.scheduledactions.persistence.cassandra;
 import com.netflix.astyanax.Keyspace;
-import com.netflix.astyanax.connectionpool.exceptions.NotFoundException;
 import com.netflix.scheduledactions.ActionInstance;
 import com.netflix.scheduledactions.persistence.ActionInstanceDao;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
  *
  * @author sthadeshwar
  */
-public class CassandraActionInstanceDao extends AbstractCassandraDao<ActionInstance> implements ActionInstanceDao {
+public class CassandraActionInstanceDao implements ActionInstanceDao {
+
+    private final CassandraDao<ActionInstance> cassandraDao;
 
     public CassandraActionInstanceDao(Keyspace keyspace) {
-        super(keyspace, new ScheduledActionsObjectMapper());
+        this.cassandraDao = new ThriftCassandraDao(ActionInstance.class, keyspace, new ScheduledActionsObjectMapper());
     }
 
     @Override
     public String createActionInstance(String group, ActionInstance actionInstance) {
-        actionInstance.setId(createColumnName(group, UUID.randomUUID().toString()));
-        upsert(group, actionInstance.getId(), actionInstance);
+        actionInstance.setId(UUID.randomUUID().toString());
+        cassandraDao.upsertToGroup(group, actionInstance.getId(), actionInstance);
         return actionInstance.getId();
     }
 
     @Override
     public void updateActionInstance(ActionInstance actionInstance) {
-        String group = extractRowKeyFromColumnName(actionInstance.getId());
-        upsert(group, actionInstance.getId(), actionInstance);
+        cassandraDao.upsert(actionInstance.getId(), actionInstance);
     }
 
     @Override
     public ActionInstance getActionInstance(String actionInstanceId) {
-        String group = extractRowKeyFromColumnName(actionInstanceId);
-        try {
-            Map<String, ActionInstance> executionMap = getColumn(group, actionInstanceId);
-            return executionMap.get(actionInstanceId);
-        } catch (NotFoundException nfe) {
-            return null;
-        }
+        return cassandraDao.get(actionInstanceId);
     }
 
     @Override
-    public void deleteActionInstance(ActionInstance actionInstance) {
-        String group = extractRowKeyFromColumnName(actionInstance.getId());
-        delete(group, actionInstance.getId());
+    public void deleteActionInstance(String group, ActionInstance actionInstance) {
+        cassandraDao.deleteFromGroup(group, actionInstance.getId());
     }
 
     @Override
     public List<ActionInstance> getActionInstances(String group) {
-        return new ArrayList<>(getRow(group).values());
+        return new ArrayList(cassandraDao.getGroup(group));
+    }
+
+    @Override
+    public List<ActionInstance> getActionInstances() {
+        return new ArrayList(cassandraDao.getAll());
     }
 }

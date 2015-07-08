@@ -35,8 +35,7 @@ public class InMemoryExecutionDao extends AbstractInMemoryDao<Execution> impleme
     }
 
     @Override
-    public void deleteExecution(Execution execution) {
-        String actionInstanceId = extractGroupFromId(execution.getId());
+    public void deleteExecution(String actionInstanceId, Execution execution) {
         delete(actionInstanceId, execution.getId());
     }
 

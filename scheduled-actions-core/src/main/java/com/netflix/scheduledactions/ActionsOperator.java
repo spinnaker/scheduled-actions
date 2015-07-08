@@ -248,7 +248,7 @@ public class ActionsOperator {
      * @throws com.netflix.scheduledactions.exceptions.ActionOperationException
      */
     public void deleteActionInstance(ActionInstance actionInstance) {
-        actionInstanceDao.deleteActionInstance(actionInstance);
+        actionInstanceDao.deleteActionInstance(actionInstance.getGroup(), actionInstance);
         if (actionInstance.getFenzoTrigger() != null) {
             try {
                 triggerOperator.deleteTrigger(actionInstance.getFenzoTrigger());
