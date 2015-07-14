@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.scheduledactions.cassandra;
+package com.netflix.scheduledactions.persistence.cassandra;
 import com.netflix.astyanax.Keyspace;
 import com.netflix.astyanax.connectionpool.exceptions.NotFoundException;
 import com.netflix.scheduledactions.ActionInstance;
@@ -37,7 +37,9 @@ public class CassandraActionInstanceDao extends AbstractCassandraDao<ActionInsta
 
     @Override
     public String createActionInstance(String group, ActionInstance actionInstance) {
-        actionInstance.setId(createColumnName(group, UUID.randomUUID().toString()));
+        if (actionInstance.getId() == null) {
+            actionInstance.setId(createColumnName(group, UUID.randomUUID().toString()));
+        }
         upsert(group, actionInstance.getId(), actionInstance);
         return actionInstance.getId();
     }

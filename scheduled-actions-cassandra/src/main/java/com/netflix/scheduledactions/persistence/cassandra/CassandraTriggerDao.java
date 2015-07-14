@@ -1,4 +1,4 @@
-package com.netflix.scheduledactions.cassandra;
+package com.netflix.scheduledactions.persistence.cassandra;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.astyanax.Keyspace;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.scheduledactions.cassandra;
+package com.netflix.scheduledactions.persistence.cassandra;
 import com.netflix.astyanax.Keyspace;
 import com.netflix.astyanax.connectionpool.exceptions.NotFoundException;
 import com.netflix.scheduledactions.Execution;

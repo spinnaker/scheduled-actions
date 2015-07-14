@@ -1,6 +1,7 @@
 package com.netflix.scheduledactions;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.netflix.scheduledactions.triggers.Trigger;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -163,19 +164,16 @@ public class ActionInstance {
     }
 
     public Context getContext() {
+        context.setActionInstanceId(this.id);
         return context;
     }
 
-    com.netflix.fenzo.triggers.Trigger<Context> getFenzoTrigger() {
+    public com.netflix.fenzo.triggers.Trigger<Context> getFenzoTrigger() {
         return fenzoTrigger;
     }
 
     void setFenzoTrigger(com.netflix.fenzo.triggers.Trigger<Context> fenzoTrigger) {
         this.fenzoTrigger = fenzoTrigger;
-    }
-
-    public static Context createContext(ActionInstance actionInstance) {
-        return new Context(actionInstance.id, actionInstance.name, actionInstance.group, actionInstance.parameters);
     }
 
     public static Builder newActionInstance() {
@@ -205,6 +203,11 @@ public class ActionInstance {
         private Context context;
 
         private Builder() {}
+
+        Builder withId(String id) {
+            this.id = id;
+            return this;
+        }
 
         Builder withName(String name) {
             this.name = name;
@@ -257,6 +260,7 @@ public class ActionInstance {
         }
 
         ActionInstance build() {
+            this.context = new Context(id, name, group, parameters);
             return new ActionInstance(this);
         }
     }

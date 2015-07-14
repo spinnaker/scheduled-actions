@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.scheduledactions.cassandra;
+package com.netflix.scheduledactions.persistence.cassandra;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;

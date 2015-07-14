@@ -1,4 +1,4 @@
-package com.netflix.scheduledactions.cassandra;
+package com.netflix.scheduledactions.persistence.cassandra;
 
 /**
  * @author sthadeshwar

@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package com.netflix.scheduledactions.executors;
-
-import com.netflix.scheduledactions.persistence.ExecutionDao;
+package com.netflix.scheduledactions.clustered.notifications;
 
 /**
  * @author sthadeshwar
  */
-public class ExecutorFactory {
+public interface ActionStatusChangeListener {
 
-    /**
-     * Factory method to get an instance of default action executor
-     * @param executionDao
-     * @param threadPoolSize
-     * @return {@code LocalThreadPoolBlockingExecutor}
-     */
-    public static Executor getDefaultExecutor(ExecutionDao executionDao, int threadPoolSize) {
-        return new LocalThreadPoolBlockingExecutor(executionDao, threadPoolSize);
-    }
+    public void onCreate(String actionInstanceId) throws Exception;
+
+    public void onDisable(String actionInstanceId) throws Exception;
+
+    public void onEnable(String actionInstanceId) throws Exception;
+
+    public void onDelete(String actionInstanceId) throws Exception;
+
 }

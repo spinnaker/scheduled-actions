@@ -1,6 +1,7 @@
-package com.netflix.scheduledactions;
+package com.netflix.scheduledactions.triggers;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.netflix.scheduledactions.Context;
 import rx.functions.Action1;
 
 /**

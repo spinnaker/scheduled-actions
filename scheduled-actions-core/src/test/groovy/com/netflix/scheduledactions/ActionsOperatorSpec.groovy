@@ -1,9 +1,10 @@
 package com.netflix.scheduledactions
+import com.netflix.fenzo.triggers.TriggerOperator
 import com.netflix.fenzo.triggers.persistence.InMemoryTriggerDao
 import com.netflix.scheduledactions.exceptions.ExecutionException
-import com.netflix.scheduledactions.executors.BlockingThreadPoolLocalExecutor
-import com.netflix.scheduledactions.persistence.InMemoryExecutionDao
 import com.netflix.scheduledactions.persistence.InMemoryActionInstanceDao
+import com.netflix.scheduledactions.persistence.InMemoryExecutionDao
+import com.netflix.scheduledactions.triggers.CronTrigger
 import spock.lang.Shared
 import spock.lang.Specification
 /**
@@ -12,10 +13,17 @@ import spock.lang.Specification
  */
 class ActionsOperatorSpec extends Specification {
 
-    @Shared DaoConfigurer daoConfigurer = new DaoConfigurer(new InMemoryActionInstanceDao(), new InMemoryTriggerDao())
+    @Shared DaoConfigurer daoConfigurer = new DaoConfigurer(new InMemoryActionInstanceDao(), new InMemoryTriggerDao(), new InMemoryExecutionDao())
     @Shared int threadPoolSize = 10     // Adjust this as per the number of tests
-    @Shared ActionsOperator actionsOperator = ActionsOperator.getInstance(daoConfigurer,
-        new BlockingThreadPoolLocalExecutor(new InMemoryExecutionDao(), threadPoolSize), threadPoolSize)
+    @Shared ActionsOperator actionsOperator = new ActionsOperator(
+        TriggerOperator.getInstance(daoConfigurer.triggerDao, threadPoolSize),
+        daoConfigurer,
+        threadPoolSize
+    )
+
+    def setupSpec() {
+        actionsOperator.initialize()
+    }
 
     static class WaitAction extends ActionSupport {
         @Override
@@ -138,10 +146,12 @@ class ActionsOperatorSpec extends Specification {
         when:
         String actionInstanceId = actionsOperator.registerActionInstance(actionInstance)
         actionsOperator.disableActionInstance(actionInstanceId)
-        actionsOperator.execute(actionInstance)
+        Execution execution = actionsOperator.execute(actionInstance)
+        List executions = actionsOperator.getExecutions(actionInstanceId)
 
         then:
-        thrown(ExecutionException)
+        execution == null
+        executions == null || executions.size() == 0
     }
 
     void 'if action takes longer execute than the specified timeout then the status is marked as TIMED_OUT'() {

@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package com.netflix.scheduledactions.executors;
-
-import com.netflix.scheduledactions.persistence.ExecutionDao;
+package com.netflix.scheduledactions;
 
 /**
  * @author sthadeshwar
  */
-public class ExecutorFactory {
-
-    /**
-     * Factory method to get an instance of default action executor
-     * @param executionDao
-     * @param threadPoolSize
-     * @return {@code LocalThreadPoolBlockingExecutor}
-     */
-    public static Executor getDefaultExecutor(ExecutionDao executionDao, int threadPoolSize) {
-        return new LocalThreadPoolBlockingExecutor(executionDao, threadPoolSize);
-    }
+public interface LocalActionOperationsDelegate extends ActionOperationsDelegate {
 }
