@@ -18,7 +18,7 @@ class InMemoryDaoSpec extends Specification {
     void 'test create execution'() {
         when:
         String actionInstanceId = 'foobar1'
-        String executionId = executionDao.createExecution(actionInstanceId, new Execution(actionInstanceId))
+        String executionId = executionDao.createExecution(actionInstanceId, new Execution('localExecutorId', actionInstanceId))
         Execution execution = executionDao.getExecution(executionId)
 
         then:
@@ -29,7 +29,7 @@ class InMemoryDaoSpec extends Specification {
     void 'test update execution'() {
         when:
         String actionInstanceId = 'foobar1'
-        String executionId = executionDao.createExecution(actionInstanceId, new Execution(actionInstanceId))
+        String executionId = executionDao.createExecution(actionInstanceId, new Execution('localExecutorId', actionInstanceId))
         Execution execution = executionDao.getExecution(executionId)
 
         then:
@@ -51,8 +51,8 @@ class InMemoryDaoSpec extends Specification {
     void 'test list execution'() {
         when:
         String actionInstanceId = 'foobar1'
-        String executionId1 = executionDao.createExecution(actionInstanceId, new Execution(actionInstanceId))
-        String executionId2 = executionDao.createExecution(actionInstanceId, new Execution(actionInstanceId))
+        String executionId1 = executionDao.createExecution(actionInstanceId, new Execution('localExecutorId', actionInstanceId))
+        String executionId2 = executionDao.createExecution(actionInstanceId, new Execution('localExecutorId', actionInstanceId))
         List<Execution> executions = executionDao.getExecutions(actionInstanceId)
 
         then:

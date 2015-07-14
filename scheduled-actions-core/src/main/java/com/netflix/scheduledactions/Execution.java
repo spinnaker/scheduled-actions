@@ -17,6 +17,7 @@ import java.util.List;
  */
 public class Execution {
 
+    private final String executorId;
     private final String actionInstanceId;
     private final long createdTime;
     private String id;
@@ -28,9 +29,15 @@ public class Execution {
     private final Logger logger = new Logger();
 
     @JsonCreator
-    public Execution(@JsonProperty("actionInstanceId") String actionInstanceId) {
+    public Execution(@JsonProperty("executorId") String executorId,
+                     @JsonProperty("actionInstanceId") String actionInstanceId) {
+        this.executorId = executorId;
         this.actionInstanceId = actionInstanceId;
         this.createdTime = System.nanoTime();   // Used just for comparing in isBefore()
+    }
+
+    public String getExecutorId() {
+        return executorId;
     }
 
     public String getId() {

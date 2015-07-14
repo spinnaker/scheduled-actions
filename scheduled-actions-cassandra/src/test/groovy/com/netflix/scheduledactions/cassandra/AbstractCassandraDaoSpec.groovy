@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.netflix.scheduledactions.ActionInstance
 import com.netflix.scheduledactions.Action
 import com.netflix.astyanax.Keyspace
-import com.netflix.scheduledactions.cassandra.AbstractCassandraDao
+import com.netflix.scheduledactions.persistence.cassandra.AbstractCassandraDao
 import spock.lang.Specification
 /**
  *
