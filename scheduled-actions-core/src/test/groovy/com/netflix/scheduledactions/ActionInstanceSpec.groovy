@@ -16,6 +16,7 @@
 
 package com.netflix.scheduledactions
 
+import com.netflix.scheduledactions.triggers.CronTrigger
 import rx.functions.Action1
 /**
  *
@@ -50,10 +51,8 @@ class ActionInstanceSpec extends ModelSpec {
             .withExecutionTimeoutInSeconds(20)
             .build()
         actionInstance.id = id
-        actionInstance.context = ActionInstance.createContext(actionInstance)
         com.netflix.fenzo.triggers.Trigger fenzoTrigger = actionInstance.getTrigger().createFenzoTrigger(actionInstance.context, TestAction1.class)
         actionInstance.setFenzoTrigger(fenzoTrigger)
-        actionInstance.setContext(ActionInstance.createContext(actionInstance))
         actionInstance.setDisabled(true)
 
         when:
@@ -99,10 +98,8 @@ class ActionInstanceSpec extends ModelSpec {
             .withExecutionTimeoutInSeconds(20)
             .build()
         actionInstance.id = id
-        actionInstance.context = ActionInstance.createContext(actionInstance)
         com.netflix.fenzo.triggers.Trigger fenzoTrigger = actionInstance.getTrigger().createFenzoTrigger(actionInstance.context, TestAction1.class)
         actionInstance.setFenzoTrigger(fenzoTrigger)
-        actionInstance.setContext(ActionInstance.createContext(actionInstance))
         actionInstance.setDisabled(true)
 
         when:
@@ -141,7 +138,7 @@ class ActionInstanceSpec extends ModelSpec {
             '    "foo": "bar"\n' +
             '  },\n' +
             '  "trigger": {\n' +
-            '    "@class": "com.netflix.scheduledactions.CronTrigger",\n' +
+            '    "@class": "com.netflix.scheduledactions.triggers.CronTrigger",\n' +
             '    "cronExpression": "0 0/10 * * * ? *"\n' +
             '  },\n' +
             '  "owners": [\n' +

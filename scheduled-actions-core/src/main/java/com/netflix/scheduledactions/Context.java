@@ -25,7 +25,7 @@ import java.util.Map;
  * @author sthadeshwar
  */
 public class Context {
-    private final String actionInstanceId;
+    private String actionInstanceId;
     private final String name;
     private final String group;
     private final Map<String, String> parameters;
@@ -39,6 +39,10 @@ public class Context {
         this.name = name;
         this.group = group;
         this.parameters = parameters;
+    }
+
+    public void setActionInstanceId(String actionInstanceId) {
+        this.actionInstanceId = actionInstanceId;
     }
 
     public String getActionInstanceId() {

@@ -10,15 +10,10 @@ import java.util.List;
 public interface ExecutionDao {
 
     public String createExecution(String actionInstanceId, Execution execution);
-
     public void updateExecution(Execution execution);
-
     public Execution getExecution(String executionId);
-
     public void deleteExecution(String actionInstanceId, Execution execution);
-
     public List<Execution> getExecutions(String actionInstanceId, int count);
-
     public List<Execution> getExecutions(String actionInstanceId);
 
 }

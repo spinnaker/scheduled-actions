@@ -4,7 +4,7 @@ A library for management, operations and persistence of scheduled actions
 Below are the features:
 
 * Create and register an ```com.netflix.scheduledactions.ActionInstance``` which gives a handle to the implemented action (```com.netflix.scheduledactions.Action```)
-* Actions can be scheduled using a type of ```com.netflix.scheduledactions.Trigger```. For example, a scheduled trigger for an action can be a cron expression
+* Actions can be scheduled using a type of ```com.netflix.scheduledactions.triggers.Trigger```. For example, a scheduled trigger for an action can be a cron expression
 * Track and monitor the action executions with ability to add a listener for events like onCancel(), onStart(), onComplete(), onError(), etc.
 * ```Action```s can be executed in an ad-hoc manner too.
 * ```Action```s can provide cancel hook using the onCancel() callback of an ```com.netflix.scheduledactions.ExecutionListener```

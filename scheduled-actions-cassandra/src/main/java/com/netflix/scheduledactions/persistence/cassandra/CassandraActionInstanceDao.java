@@ -37,7 +37,9 @@ public class CassandraActionInstanceDao implements ActionInstanceDao {
 
     @Override
     public String createActionInstance(String group, ActionInstance actionInstance) {
-        actionInstance.setId(UUID.randomUUID().toString());
+        if (actionInstance.getId() == null) {
+            actionInstance.setId(UUID.randomUUID().toString());
+        }
         cassandraDao.upsertToGroup(group, actionInstance.getId(), actionInstance);
         return actionInstance.getId();
     }

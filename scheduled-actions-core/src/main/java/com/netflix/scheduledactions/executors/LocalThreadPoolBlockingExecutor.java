@@ -12,24 +12,19 @@ import java.util.concurrent.*;
 /**
  * @author sthadeshwar
  */
-public class BlockingThreadPoolLocalExecutor implements Executor {
+public class LocalThreadPoolBlockingExecutor implements Executor {
 
-    private static final Logger logger = LoggerFactory.getLogger(BlockingThreadPoolLocalExecutor.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocalThreadPoolBlockingExecutor.class);
 
     private final ExecutionDao executionDao;
     private final ExecutorService executeService;
     private final ExecutorService cancelService;
     private final ConcurrentMap<String,Future> futures = new ConcurrentHashMap<String, Future>();
 
-    public BlockingThreadPoolLocalExecutor(ExecutionDao executionDao, int threadPoolSize) {
+    public LocalThreadPoolBlockingExecutor(ExecutionDao executionDao, int threadPoolSize) {
         this.executionDao = executionDao;
         this.executeService = Executors.newFixedThreadPool(threadPoolSize);
         this.cancelService = Executors.newFixedThreadPool(threadPoolSize > 1 ? threadPoolSize/2 : threadPoolSize);
-    }
-
-    @Override
-    public ExecutionDao getExecutionDao() {
-        return this.executionDao;
     }
 
     @Override
@@ -125,13 +120,13 @@ public class BlockingThreadPoolLocalExecutor implements Executor {
                     if (future != null) {
                         future.cancel(true);
                     }
+                } catch (Exception e) {
+                    throw new ExecutionException(e);
+                } finally {
                     execution.setEndTime(new Date());
                     execution.setStatus(Status.CANCELLED);
                     executionDao.updateExecution(execution);
                     logger.info("Successfully cancelled the action {} for execution {}", action, execution);
-                } catch (Exception e) {
-                    executionListener.onError(context, execution);
-                    throw new com.netflix.scheduledactions.exceptions.ExecutionException(e);
                 }
             }
         });

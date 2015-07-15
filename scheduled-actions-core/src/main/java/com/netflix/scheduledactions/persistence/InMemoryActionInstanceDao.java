@@ -12,7 +12,9 @@ public class InMemoryActionInstanceDao extends AbstractInMemoryDao<ActionInstanc
 
     @Override
     public String createActionInstance(String group, ActionInstance actionInstance) {
-        actionInstance.setId(createId(group, UUID.randomUUID().toString()));
+        if (actionInstance.getId() == null) {
+            actionInstance.setId(createId(group, UUID.randomUUID().toString()));
+        }
         create(group, actionInstance.getId(), actionInstance);
         return actionInstance.getId();
     }

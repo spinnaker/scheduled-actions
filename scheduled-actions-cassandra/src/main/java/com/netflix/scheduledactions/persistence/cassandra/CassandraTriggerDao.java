@@ -41,8 +41,8 @@ public class CassandraTriggerDao implements TriggerDao {
     }
 
     @Override
-    public void deleteTrigger(Trigger trigger) {
-        cassandraDao.deleteFromGroup("", trigger.getId());  // TODO
+    public void deleteTrigger(String triggerGroup, Trigger trigger) {
+        cassandraDao.deleteFromGroup(triggerGroup, trigger.getId());
     }
 
     @Override

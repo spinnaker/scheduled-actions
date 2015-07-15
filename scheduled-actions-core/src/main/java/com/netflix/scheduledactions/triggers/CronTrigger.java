@@ -1,7 +1,8 @@
-package com.netflix.scheduledactions;
+package com.netflix.scheduledactions.triggers;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.netflix.scheduledactions.Context;
 import rx.functions.Action1;
 
 /**
@@ -22,7 +23,11 @@ public class CronTrigger implements Trigger {
     }
 
     public String getCronExpression() {
-      return cronExpression;
+        return cronExpression;
     }
 
+    @Override
+    public String toString() {
+        return "CronTrigger (" + cronExpression + ')';
+    }
 }
