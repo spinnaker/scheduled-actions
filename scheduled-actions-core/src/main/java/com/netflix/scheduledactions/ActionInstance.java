@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author sthadeshwar
  */
-@JsonDeserialize(builder = ActionInstance.Builder.class)
+@JsonDeserialize(builder = ActionInstance.ActionInstanceBuilder.class)
 public class ActionInstance {
 
     public static final String DEFAULT_GROUP = "DEFAULT_GROUP";
@@ -37,7 +37,7 @@ public class ActionInstance {
 
     private ActionInstance() {}
 
-    private ActionInstance(Builder builder) {
+    private ActionInstance(ActionInstanceBuilder builder) {
         this.id = builder.id;
         this.name = builder.name;
         this.group = builder.group;
@@ -176,8 +176,8 @@ public class ActionInstance {
         this.fenzoTrigger = fenzoTrigger;
     }
 
-    public static Builder newActionInstance() {
-        return new Builder();
+    public static ActionInstanceBuilder newActionInstance() {
+        return new ActionInstanceBuilder();
     }
 
     @Override
@@ -185,7 +185,7 @@ public class ActionInstance {
         return id != null ? id : name;
     }
 
-    public static class Builder {
+    public static class ActionInstanceBuilder {
         private String id;
         private String name;
         private String group = DEFAULT_GROUP;
@@ -202,64 +202,64 @@ public class ActionInstance {
         private ConcurrentExecutionStrategy concurrentExecutionStrategy = DEFAULT_EXECUTION_STRATEGY;
         private Context context;
 
-        private Builder() {}
+        private ActionInstanceBuilder() {}
 
-        Builder withId(String id) {
+        public ActionInstanceBuilder withId(String id) {
             this.id = id;
             return this;
         }
 
-        Builder withName(String name) {
+        public ActionInstanceBuilder withName(String name) {
             this.name = name;
             return this;
         }
 
-        Builder withGroup(String group) {
+        public ActionInstanceBuilder withGroup(String group) {
             this.group = group;
             return this;
         }
 
-        Builder withAction(Class<? extends Action> action) {
+        public ActionInstanceBuilder withAction(Class<? extends Action> action) {
             this.action = action;
             return this;
         }
 
-        Builder withParameters(Map<String, String> parameters) {
+        public ActionInstanceBuilder withParameters(Map<String, String> parameters) {
             this.parameters = parameters;
             return this;
         }
 
-        Builder withTrigger(Trigger trigger) {
+        public ActionInstanceBuilder withTrigger(Trigger trigger) {
             this.trigger = trigger;
             return this;
         }
 
-        Builder withOwners(String... owners) {
+        public ActionInstanceBuilder withOwners(String... owners) {
             this.owners = Arrays.asList(owners);
             return this;
         }
 
-        Builder withWatchers(String... watchers) {
+        public ActionInstanceBuilder withWatchers(String... watchers) {
             this.watchers = Arrays.asList(watchers);
             return this;
         }
 
-        Builder withExecutionListener(Class<? extends ExecutionListener> executionListener) {
+        public ActionInstanceBuilder withExecutionListener(Class<? extends ExecutionListener> executionListener) {
             this.executionListener = executionListener;
             return this;
         }
 
-        Builder withExecutionTimeoutInSeconds(long executionTimeoutInSeconds) {
+        public ActionInstanceBuilder withExecutionTimeoutInSeconds(long executionTimeoutInSeconds) {
             this.executionTimeoutInSeconds = executionTimeoutInSeconds;
             return this;
         }
 
-        Builder withConcurrentExecutionStrategy(ConcurrentExecutionStrategy concurrentExecutionStrategy) {
+        public ActionInstanceBuilder withConcurrentExecutionStrategy(ConcurrentExecutionStrategy concurrentExecutionStrategy) {
             this.concurrentExecutionStrategy = concurrentExecutionStrategy;
             return this;
         }
 
-        ActionInstance build() {
+        public ActionInstance build() {
             this.context = new Context(id, name, group, parameters);
             return new ActionInstance(this);
         }
