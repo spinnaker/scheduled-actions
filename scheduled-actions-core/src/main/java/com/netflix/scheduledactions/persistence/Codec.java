@@ -14,10 +14,29 @@
  * limitations under the License.
  */
 
-dependencies {
-    compile ("com.netflix.fenzo:fenzo-triggers:0.6.1")
-    compile ("io.reactivex:rxjava:1.0.4")
-    compile ("com.fasterxml.jackson.core:jackson-annotations:2.4.4")
-    compile ("com.fasterxml.jackson.core:jackson-databind:2.4.4")
-    testCompile ("com.fasterxml.jackson.core:jackson-core:2.4.4")
+package com.netflix.scheduledactions.persistence;
+
+import java.io.IOException;
+
+/**
+ * A compressor/de-compressor interface
+ * @author sthadeshwar
+ */
+public interface Codec {
+
+    /**
+     * Compress the provided bytes array
+     * @param bytes
+     * @return
+     * @throws IOException
+     */
+    byte[] compress(byte[] bytes) throws IOException;
+
+    /**
+     * Un-compress the provided bytes array
+     * @param bytes
+     * @return
+     * @throws IOException
+     */
+    byte[] uncompress(byte[] bytes) throws IOException;
 }

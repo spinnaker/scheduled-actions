@@ -1,7 +1,6 @@
 package com.netflix.scheduledactions.persistence;
 
 import com.netflix.scheduledactions.ActionInstance;
-import com.netflix.fenzo.triggers.persistence.AbstractInMemoryDao;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,8 +32,7 @@ public class InMemoryActionInstanceDao extends AbstractInMemoryDao<ActionInstanc
     }
 
     @Override
-    public void deleteActionInstance(ActionInstance actionInstance) {
-        String group = extractGroupFromId(actionInstance.getId());
+    public void deleteActionInstance(String group, ActionInstance actionInstance) {
         delete(group, actionInstance.getId());
     }
 
@@ -43,4 +41,8 @@ public class InMemoryActionInstanceDao extends AbstractInMemoryDao<ActionInstanc
         return list(group);
     }
 
+    @Override
+    public List<ActionInstance> getActionInstances() {
+        return list();
+    }
 }

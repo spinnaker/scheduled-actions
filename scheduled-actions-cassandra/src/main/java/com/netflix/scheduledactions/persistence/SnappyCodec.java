@@ -14,10 +14,25 @@
  * limitations under the License.
  */
 
-dependencies {
-    compile ("com.netflix.fenzo:fenzo-triggers:0.6.1")
-    compile ("io.reactivex:rxjava:1.0.4")
-    compile ("com.fasterxml.jackson.core:jackson-annotations:2.4.4")
-    compile ("com.fasterxml.jackson.core:jackson-databind:2.4.4")
-    testCompile ("com.fasterxml.jackson.core:jackson-core:2.4.4")
+package com.netflix.scheduledactions.persistence;
+
+import org.xerial.snappy.Snappy;
+
+import java.io.IOException;
+
+/**
+ *
+ * @author sthadeshwar
+ */
+public class SnappyCodec implements Codec {
+
+    @Override
+    public byte[] compress(byte[] bytes) throws IOException {
+        return Snappy.compress(bytes);
+    }
+
+    @Override
+    public byte[] uncompress(byte[] bytes) throws IOException {
+        return Snappy.uncompress(bytes);
+    }
 }

@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-dependencies {
-    compile ("com.netflix.fenzo:fenzo-triggers:0.6.1")
-    compile ("io.reactivex:rxjava:1.0.4")
-    compile ("com.fasterxml.jackson.core:jackson-annotations:2.4.4")
-    compile ("com.fasterxml.jackson.core:jackson-databind:2.4.4")
-    testCompile ("com.fasterxml.jackson.core:jackson-core:2.4.4")
+package com.netflix.scheduledactions.persistence.cassandra;
+
+import java.util.List;
+
+/**
+ * @author sthadeshwar
+ */
+public interface CassandraDao<T> {
+
+    public void upsert(String id, T value);
+    public void upsertToGroup(String group, String id, T value);
+    public void delete(String id);
+    public void deleteFromGroup(String group, String id);
+    public T get(String id);
+    public List<T> getGroup(String group);
+    public List<T> getAll();
+
 }
