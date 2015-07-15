@@ -124,12 +124,20 @@ public class ActionsOperator {
     }
 
     /**
-     * Returns a list of {@code ActionInstance}s registered with the actionInstance service for the given actionInstanceGroup
+     * Returns a list of {@code ActionInstance}s registered with the {@code ActionsOperator} for the given actionInstanceGroup
      * @param actionInstanceGroup
      * @return
      */
     public List<ActionInstance> getActionInstances(String actionInstanceGroup) {
         return actionInstanceDao.getActionInstances(actionInstanceGroup);
+    }
+
+    /**
+     * Returns a list of all the {@code ActionInstance}s registered with the {@code ActionsOperator}
+     * @return
+     */
+    public List<ActionInstance> getActionInstances() {
+        return actionInstanceDao.getActionInstances();
     }
 
     /**
