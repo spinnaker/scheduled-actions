@@ -244,10 +244,10 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
      */
     @Override
     public void delete(ActionInstance actionInstance) {
-        actionInstanceDao.deleteActionInstance(actionInstance);
+        actionInstanceDao.deleteActionInstance(actionInstance.getGroup(), actionInstance);
         if (actionInstance.getFenzoTrigger() != null) {
             try {
-                triggerOperator.deleteTrigger(actionInstance.getFenzoTrigger());
+                triggerOperator.deleteTrigger(actionInstance.getGroup(), actionInstance.getFenzoTrigger());
             } catch (SchedulerException e) {
                 throw new ActionOperationException(String.format(
                     "Exception occurred while deleting trigger %s for actionInstance %s", actionInstance.getTrigger(), actionInstance), e);
