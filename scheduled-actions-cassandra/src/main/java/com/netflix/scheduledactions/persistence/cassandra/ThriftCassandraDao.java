@@ -34,12 +34,10 @@ import com.netflix.astyanax.util.RangeBuilder;
 import com.netflix.scheduledactions.persistence.Codec;
 import com.netflix.scheduledactions.persistence.SnappyCodec;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author sthadeshwar
@@ -53,7 +51,6 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
     private final Codec codec;
     private final ObjectMapper objectMapper;
     private final ColumnFamily<String, String> columnFamily;
-    private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     public ThriftCassandraDao(Class<T> parameterClass, Keyspace keyspace, ObjectMapper objectMapper) {
         this.parameterClass = parameterClass;
@@ -94,19 +91,6 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
         );
     }
 
-    @PostConstruct
-    public void init() throws ConnectionException {
-        if (initialized.compareAndSet(false, true)) {
-            List<String> columnFamilyNames = new ArrayList<>();
-            for (ColumnFamilyDefinition cfd : keyspace.describeKeyspace().getColumnFamilyList()) {
-                columnFamilyNames.add(cfd.getName());
-            }
-            if (!columnFamilyNames.contains(columnFamily.getName())) {
-                keyspace.createColumnFamily(columnFamily, null);
-            }
-        }
-    }
-
     private static String toTitleCase(String camelCase) {
         if (camelCase == null || camelCase.length() == 0) return camelCase;
         String regex = "([a-z])([A-Z]+)";
@@ -116,6 +100,17 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
 
     private MutationBatch prepareAtomicMutationBatch() {
         return keyspace.prepareMutationBatch().withAtomicBatch(true);
+    }
+
+    @Override
+    public void createColumnFamily() throws ConnectionException {
+        List<String> columnFamilyNames = new ArrayList<>();
+        for (ColumnFamilyDefinition cfd : keyspace.describeKeyspace().getColumnFamilyList()) {
+            columnFamilyNames.add(cfd.getName());
+        }
+        if (!columnFamilyNames.contains(columnFamily.getName())) {
+            keyspace.createColumnFamily(columnFamily, null);
+        }
     }
 
     @Override
@@ -172,7 +167,7 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
     public T get(String id) {
         try {
             Column<String> col = keyspace.prepareQuery(columnFamily).getKey(id).getColumn(id).execute().getResult();
-            byte[] bytes = codec.uncompress(col.getByteArrayValue());
+            byte[] bytes = codec.decompress(col.getByteArrayValue());
             return objectMapper.readValue(bytes, parameterClass);
         } catch (NotFoundException e) {
             return null;
@@ -189,15 +184,15 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
             // Get all the row keys
             RowQuery<String, String> rowQuery = keyspace.prepareQuery(columnFamily).getKey(group);
             rowQuery.autoPaginate(true).withColumnRange(new RangeBuilder().setLimit(10).setReversed(true).build());
-            Collection<String> columnNames = rowQuery.execute().getResult().getColumnNames();
+            Collection<String> rowKeys = rowQuery.execute().getResult().getColumnNames();
 
             // Get values for all the fetched row keys
-            RowSliceQuery<String, String> rowSliceQuery = keyspace.prepareQuery(columnFamily).getKeySlice(columnNames);
+            RowSliceQuery<String, String> rowSliceQuery = keyspace.prepareQuery(columnFamily).getKeySlice(rowKeys);
             Rows<String, String> rows = rowSliceQuery.execute().getResult();
             for (Row<String, String> row : rows) {
                 if (row.getColumns() != null) {
                     byte[] bytes = row.getColumns().getColumnByIndex(0).getByteArrayValue();
-                    list.add(objectMapper.readValue(codec.uncompress(bytes), parameterClass));
+                    list.add(objectMapper.readValue(codec.decompress(bytes), parameterClass));
                 }
             }
 

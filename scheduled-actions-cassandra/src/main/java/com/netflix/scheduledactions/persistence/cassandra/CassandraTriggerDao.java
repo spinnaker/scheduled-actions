@@ -2,9 +2,11 @@ package com.netflix.scheduledactions.persistence.cassandra;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.astyanax.Keyspace;
+import com.netflix.astyanax.connectionpool.exceptions.ConnectionException;
 import com.netflix.fenzo.triggers.Trigger;
 import com.netflix.fenzo.triggers.persistence.TriggerDao;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +21,11 @@ public class CassandraTriggerDao implements TriggerDao {
     public CassandraTriggerDao(Keyspace keyspace) {
         this.objectMapper = new ScheduledActionsObjectMapper();
         this.cassandraDao = new ThriftCassandraDao(Trigger.class, keyspace, objectMapper);
+    }
+
+    @PostConstruct
+    public void init() throws ConnectionException {
+        this.cassandraDao.createColumnFamily();
     }
 
     @Override

@@ -32,7 +32,7 @@ public class SnappyCodec implements Codec {
     }
 
     @Override
-    public byte[] uncompress(byte[] bytes) throws IOException {
+    public byte[] decompress(byte[] bytes) throws IOException {
         return Snappy.uncompress(bytes);
     }
 }

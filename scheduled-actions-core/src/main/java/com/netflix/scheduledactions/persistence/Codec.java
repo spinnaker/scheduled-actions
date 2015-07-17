@@ -38,5 +38,5 @@ public interface Codec {
      * @return
      * @throws IOException
      */
-    byte[] uncompress(byte[] bytes) throws IOException;
+    byte[] decompress(byte[] bytes) throws IOException;
 }

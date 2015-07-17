@@ -39,7 +39,7 @@ class ActionInstanceSpec extends ModelSpec {
         setup:
         String id = UUID.randomUUID().toString()
         String name = 'CanaryAnalysisAction'
-        String cron = '0 0/10 * * * ? *'
+        String cron = '0/10 * * * * ? *'
         ActionInstance actionInstance = ActionInstance.newActionInstance()
             .withName(name)
             .withGroup(id)
@@ -86,7 +86,7 @@ class ActionInstanceSpec extends ModelSpec {
         setup:
         String id = UUID.randomUUID().toString()
         String name = 'CanaryAnalysisAction'
-        String cron = '0 0/10 * * * ? *'
+        String cron = '0/10 * * * * ? *'
         ActionInstance actionInstance = ActionInstance.newActionInstance()
             .withName(name)
             .withGroup(id)

@@ -16,9 +16,11 @@
 
 package com.netflix.scheduledactions.persistence.cassandra;
 import com.netflix.astyanax.Keyspace;
+import com.netflix.astyanax.connectionpool.exceptions.ConnectionException;
 import com.netflix.scheduledactions.ActionInstance;
 import com.netflix.scheduledactions.persistence.ActionInstanceDao;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +35,11 @@ public class CassandraActionInstanceDao implements ActionInstanceDao {
 
     public CassandraActionInstanceDao(Keyspace keyspace) {
         this.cassandraDao = new ThriftCassandraDao(ActionInstance.class, keyspace, new ScheduledActionsObjectMapper());
+    }
+
+    @PostConstruct
+    public void init() throws ConnectionException {
+        this.cassandraDao.createColumnFamily();
     }
 
     @Override
