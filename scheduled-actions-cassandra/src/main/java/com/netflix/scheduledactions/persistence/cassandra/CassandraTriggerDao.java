@@ -2,7 +2,6 @@ package com.netflix.scheduledactions.persistence.cassandra;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.astyanax.Keyspace;
-import com.netflix.astyanax.connectionpool.exceptions.ConnectionException;
 import com.netflix.fenzo.triggers.Trigger;
 import com.netflix.fenzo.triggers.persistence.TriggerDao;
 
@@ -24,7 +23,7 @@ public class CassandraTriggerDao implements TriggerDao {
     }
 
     @PostConstruct
-    public void init() throws ConnectionException {
+    public void init() {
         this.cassandraDao.createColumnFamily();
     }
 

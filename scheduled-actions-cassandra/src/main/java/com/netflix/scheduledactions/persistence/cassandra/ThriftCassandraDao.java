@@ -91,25 +91,18 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
         );
     }
 
-    private static String toTitleCase(String camelCase) {
-        if (camelCase == null || camelCase.length() == 0) return camelCase;
-        String regex = "([a-z])([A-Z]+)";
-        String replacement = "$1_$2";
-        return camelCase.replaceAll(regex, replacement).toLowerCase();
-    }
-
-    private MutationBatch prepareAtomicMutationBatch() {
-        return keyspace.prepareMutationBatch().withAtomicBatch(true);
-    }
-
     @Override
-    public void createColumnFamily() throws ConnectionException {
-        List<String> columnFamilyNames = new ArrayList<>();
-        for (ColumnFamilyDefinition cfd : keyspace.describeKeyspace().getColumnFamilyList()) {
-            columnFamilyNames.add(cfd.getName());
-        }
-        if (!columnFamilyNames.contains(columnFamily.getName())) {
-            keyspace.createColumnFamily(columnFamily, null);
+    public void createColumnFamily() {
+        try {
+            List<String> columnFamilyNames = new ArrayList<>();
+            for (ColumnFamilyDefinition cfd : keyspace.describeKeyspace().getColumnFamilyList()) {
+                columnFamilyNames.add(cfd.getName());
+            }
+            if (!columnFamilyNames.contains(columnFamily.getName())) {
+                keyspace.createColumnFamily(columnFamily, null);
+            }
+        } catch (ConnectionException e) {
+            throw new RuntimeException(String.format("Exception occurred while creating column family '%s'", columnFamily.getName()), e);
         }
     }
 
@@ -205,5 +198,16 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
     @Override
     public List<T> getAll() {
         return getGroup(GLOBAL_GROUP);
+    }
+
+    private MutationBatch prepareAtomicMutationBatch() {
+        return keyspace.prepareMutationBatch().withAtomicBatch(true);
+    }
+
+    private static String toTitleCase(String camelCase) {
+        if (camelCase == null || camelCase.length() == 0) return camelCase;
+        String regex = "([a-z])([A-Z]+)";
+        String replacement = "$1_$2";
+        return camelCase.replaceAll(regex, replacement).toLowerCase();
     }
 }

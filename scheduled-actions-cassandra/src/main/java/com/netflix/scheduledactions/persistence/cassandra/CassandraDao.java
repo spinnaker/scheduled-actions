@@ -16,8 +16,6 @@
 
 package com.netflix.scheduledactions.persistence.cassandra;
 
-import com.netflix.astyanax.connectionpool.exceptions.ConnectionException;
-
 import java.util.List;
 
 /**
@@ -25,7 +23,7 @@ import java.util.List;
  */
 public interface CassandraDao<T> {
 
-    public void createColumnFamily() throws ConnectionException;
+    public void createColumnFamily();
     public void upsert(String id, T value);
     public void upsertToGroup(String group, String id, T value);
     public void delete(String id);

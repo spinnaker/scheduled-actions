@@ -16,7 +16,6 @@
 
 package com.netflix.scheduledactions.persistence.cassandra;
 import com.netflix.astyanax.Keyspace;
-import com.netflix.astyanax.connectionpool.exceptions.ConnectionException;
 import com.netflix.scheduledactions.Execution;
 import com.netflix.scheduledactions.persistence.ExecutionDao;
 
@@ -38,7 +37,7 @@ public class CassandraExecutionDao implements ExecutionDao {
     }
 
     @PostConstruct
-    public void init() throws ConnectionException {
+    public void init() {
         this.cassandraDao.createColumnFamily();
     }
 
