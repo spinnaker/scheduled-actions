@@ -137,7 +137,7 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
         try {
             MutationBatch m = prepareAtomicMutationBatch();
             m.withRow(columnFamily, GLOBAL_GROUP).deleteColumn(id);
-            m.withRow(columnFamily, id).deleteColumn(id);
+            m.withRow(columnFamily, id).delete();
             m.execute();
         } catch (ConnectionException e) {
             throw new RuntimeException(String.format("Exception occurred while deleting value for '%s'", id), e);
@@ -149,7 +149,7 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
         try {
             MutationBatch m = prepareAtomicMutationBatch();
             m.withRow(columnFamily, group).deleteColumn(id);
-            m.withRow(columnFamily, id).deleteColumn(id);
+            m.withRow(columnFamily, id).delete();
             m.execute();
         } catch (ConnectionException e) {
             throw new RuntimeException(String.format("Exception occurred while deleting value for '%s' from group '%s'", id, group), e);
@@ -183,7 +183,7 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
             RowSliceQuery<String, String> rowSliceQuery = keyspace.prepareQuery(columnFamily).getKeySlice(rowKeys);
             Rows<String, String> rows = rowSliceQuery.execute().getResult();
             for (Row<String, String> row : rows) {
-                if (row.getColumns() != null) {
+                if (row.getColumns() != null && row.getColumns().size() > 0) {
                     byte[] bytes = row.getColumns().getColumnByIndex(0).getByteArrayValue();
                     list.add(objectMapper.readValue(codec.decompress(bytes), parameterClass));
                 }
