@@ -108,6 +108,12 @@ public class ClusteredActionOperationsDelegateImpl extends AbstractActionOperati
     }
 
     @Override
+    public void update(ActionInstance actionInstance) {
+        super.update(actionInstance);
+        clusterMediator.sendActionMessage(new ActionInstanceMessage(actionInstance.getId(), Status.UPDATED));
+    }
+
+    @Override
     public void disable(ActionInstance actionInstance) {
         super.disable(actionInstance);
         clusterMediator.sendActionMessage(new ActionInstanceMessage(actionInstance.getId(), Status.DISABLED));

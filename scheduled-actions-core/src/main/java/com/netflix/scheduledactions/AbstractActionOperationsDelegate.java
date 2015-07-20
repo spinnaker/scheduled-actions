@@ -99,7 +99,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
         validate(actionInstance);
 
         actionInstanceDao.createActionInstance(actionInstance.getGroup(), actionInstance);
-
         if (actionInstance.getTrigger() != null) {
             actionInstance.setFenzoTrigger(actionInstance.getTrigger().createFenzoTrigger(actionInstance.getContext(), InternalAction.class));
             try {
@@ -109,7 +108,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
                     "Exception occurred while registering actionInstance %s", actionInstance), e);
             }
         }
-
         actionInstanceDao.updateActionInstance(actionInstance);
 
         logger.info("Successfully registered the actionInstance {}", actionInstance);
@@ -124,6 +122,29 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
                 actionOperationsDelegate.execute(actionInstanceId, "ScheduledTrigger"); // TODO: Pass trigger info from context
             } catch (ActionInstanceNotFoundException e) {}
         }
+    }
+
+    /**
+     *
+     * @param actionInstance
+     */
+    @Override
+    public void update(ActionInstance actionInstance) {
+        // Find an existing one to update
+        ActionInstance existingInstance = actionInstanceDao.getActionInstance(actionInstance.getId());
+        if (existingInstance == null) {
+            throw new ActionOperationException(
+                String.format("No existing actionInstance with id %s found for the update operation", actionInstance.getId())
+            );
+        }
+        // Set the id of the existing action instance so that this looks like an "update" operation
+        actionInstance.setId(existingInstance.getId());
+
+        // Validate the new one before deleting the existing one
+        validate(actionInstance);
+        delete(existingInstance);
+        register(actionInstance);
+        logger.info("Successfully updated the actionInstance {}", actionInstance);
     }
 
     /**

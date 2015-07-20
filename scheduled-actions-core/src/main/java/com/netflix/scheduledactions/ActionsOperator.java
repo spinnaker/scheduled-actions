@@ -27,7 +27,6 @@ public class ActionsOperator {
     private final ExecutionDao executionDao;
     private final AtomicBoolean initialized = new AtomicBoolean(false);
     private final ActionOperationsDelegate actionOperationsDelegate;
-    private final boolean clustered;
 
     /**
      * Creates a new instance of {@code ActionsOperator} with a {@code LocalActionOperationsDelegate}
@@ -58,8 +57,7 @@ public class ActionsOperator {
                 daoConfigurer,
                 new LocalThreadPoolBlockingExecutor(daoConfigurer.getExecutionDao(), threadPoolSize),
                 threadPoolSize
-            ),
-            false
+            )
         );
     }
 
@@ -68,35 +66,19 @@ public class ActionsOperator {
      * {@code LocalActionOperationsDelegate} depending on the {@code clustered} flag. If the cluster flag is passed
      * 'true' then an implementation of {@code LocalActionOperationsDelegate} has to be passed along
      * @param daoConfigurer
-     * @param clustered
+     * @param actionOperationsDelegate
      */
     public ActionsOperator(DaoConfigurer daoConfigurer,
-                           ActionOperationsDelegate actionOperationsDelegate,
-                           boolean clustered) {
+                           ActionOperationsDelegate actionOperationsDelegate) {
         this.actionInstanceDao = daoConfigurer.getActionInstanceDao();
         this.executionDao = daoConfigurer.getExecutionDao();
-        this.clustered = clustered;
         this.actionOperationsDelegate = actionOperationsDelegate;
-        checkIfValid();
+        validate();
     }
 
-    private void checkIfValid() {
+    private void validate() {
         if (actionOperationsDelegate == null) {
             throw new IllegalArgumentException("ActionOperationsDelegate cannot be null");
-        }
-
-        if (clustered) {
-            if (!(actionOperationsDelegate instanceof ClusteredActionOperationsDelegate)) {
-                throw new IllegalArgumentException(
-                    "ActionOperationsDelegate should be of type ClusteredActionOperationsDelegate for clustered configuration"
-                );
-            }
-        } else {
-            if (!(actionOperationsDelegate instanceof LocalActionOperationsDelegate)) {
-                throw new IllegalArgumentException(
-                    "ActionOperationsDelegate should be of type LocalActionOperationsDelegate for non-clustered configuration"
-                );
-            }
         }
     }
 

@@ -49,6 +49,11 @@ public interface ActionOperationsDelegate {
     public String register(ActionInstance actionInstance);
 
     /**
+     * Updates an existing actionInstance
+     * @param actionInstance
+     */
+    public void update(ActionInstance actionInstance);
+    /**
      *
      * @param actionInstance
      */
