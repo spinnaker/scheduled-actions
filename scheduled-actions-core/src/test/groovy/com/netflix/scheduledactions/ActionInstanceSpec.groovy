@@ -129,6 +129,49 @@ class ActionInstanceSpec extends ModelSpec {
         deserializedActionInstance.lastUpdated != null
     }
 
+    void 'serialize and deserialize for ActionInstance with NON-DEFAULT values should not throw any exceptions'() {
+        setup:
+        String id = UUID.randomUUID().toString()
+        String name = 'CanaryAnalysisAction'
+        String cron = '0/10 * * * * ? *'
+        ActionInstance actionInstance = ActionInstance.newActionInstance()
+            .withName(name)
+            .withAction(TestAction.class)
+            .withParameters([canaryId: id])
+            .withTrigger(new CronTrigger(cron))
+            .build()
+        actionInstance.id = id
+        com.netflix.fenzo.triggers.Trigger fenzoTrigger = actionInstance.getTrigger().createFenzoTrigger(actionInstance.context, TestAction1.class)
+        actionInstance.setFenzoTrigger(fenzoTrigger)
+        actionInstance.setDisabled(true)
+
+        when:
+        String bytes = objectMapper.writeValueAsString(actionInstance)
+
+        then:
+        noExceptionThrown()
+        bytes != null
+
+        when:
+        ActionInstance deserializedActionInstance = objectMapper.readValue(bytes, ActionInstance.class)
+
+        then:
+        noExceptionThrown()
+        deserializedActionInstance != null
+        deserializedActionInstance.id == actionInstance.id
+        deserializedActionInstance.name == actionInstance.name
+        deserializedActionInstance.group == actionInstance.group
+        deserializedActionInstance.action == actionInstance.action
+        deserializedActionInstance.trigger != null
+        deserializedActionInstance.trigger instanceof CronTrigger
+        ((CronTrigger) deserializedActionInstance.trigger).cronExpression == cron
+        deserializedActionInstance.fenzoTrigger != null
+        deserializedActionInstance.fenzoTrigger instanceof com.netflix.fenzo.triggers.CronTrigger
+        deserializedActionInstance.context != null
+        deserializedActionInstance.disabled == true
+        deserializedActionInstance.lastUpdated != null
+    }
+
     void 'serialization from json should work fine'() {
         setup:
         String json = '{\n' +

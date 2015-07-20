@@ -3,10 +3,7 @@ package com.netflix.scheduledactions;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.netflix.scheduledactions.triggers.Trigger;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author sthadeshwar
@@ -235,12 +232,12 @@ public class ActionInstance {
         }
 
         public ActionInstanceBuilder withOwners(String... owners) {
-            this.owners = Arrays.asList(owners);
+            this.owners = owners != null ? Arrays.asList(owners) : Collections.<String>emptyList();
             return this;
         }
 
         public ActionInstanceBuilder withWatchers(String... watchers) {
-            this.watchers = Arrays.asList(watchers);
+            this.watchers = watchers != null ? Arrays.asList(watchers) : Collections.<String>emptyList();
             return this;
         }
 
