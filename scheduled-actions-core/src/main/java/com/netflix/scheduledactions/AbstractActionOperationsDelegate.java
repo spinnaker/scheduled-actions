@@ -142,8 +142,12 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
 
         // Validate the new one before deleting the existing one
         validate(actionInstance);
+
+        // Delete the existing one
         delete(existingInstance);
-        register(actionInstance);
+
+        // Register the new one
+        this.register(actionInstance);
         logger.info("Successfully updated the actionInstance {}", actionInstance);
     }
 

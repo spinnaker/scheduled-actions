@@ -202,6 +202,16 @@ public class ActionsOperator {
     }
 
     /**
+     * Updates the existing {@code ActionInstance}
+     * @param actionInstance
+     * @throws com.netflix.scheduledactions.exceptions.ActionOperationException
+     */
+    public void updateActionInstance(ActionInstance actionInstance) {
+        checkInitialized();
+        actionOperationsDelegate.update(actionInstance);
+    }
+
+    /**
      * Deletes/Removes the {@code ActionInstance} associated with this actionInstanceId.
      * If it has a {@code CronTrigger} then it is also un-scheduled from scheduler
      * @param actionInstanceId
