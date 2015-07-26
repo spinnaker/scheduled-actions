@@ -2,6 +2,7 @@ package com.netflix.scheduledactions.triggers;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.netflix.fenzo.triggers.TriggerUtils;
 import com.netflix.scheduledactions.Context;
 import rx.functions.Action1;
 
@@ -18,7 +19,13 @@ public class CronTrigger implements Trigger {
     }
 
     @Override
-    public com.netflix.fenzo.triggers.CronTrigger<Context> createFenzoTrigger(Context context, Class<? extends Action1<Context>> action) {
+    public void validate() throws IllegalArgumentException {
+        TriggerUtils.validateCronExpression(this.cronExpression);
+    }
+
+    @Override
+    public com.netflix.fenzo.triggers.Trigger<Context> createFenzoTrigger(Context context,
+                                                                          Class<? extends Action1<Context>> action) {
         return new com.netflix.fenzo.triggers.CronTrigger<>(this.cronExpression, context.getName(), context, Context.class, action);
     }
 

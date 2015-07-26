@@ -100,7 +100,8 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
 
         actionInstanceDao.createActionInstance(actionInstance.getGroup(), actionInstance);
         if (actionInstance.getTrigger() != null) {
-            actionInstance.setFenzoTrigger(actionInstance.getTrigger().createFenzoTrigger(actionInstance.getContext(), InternalAction.class));
+            actionInstance.setFenzoTrigger(actionInstance.getTrigger().createFenzoTrigger(actionInstance.getContext(),
+                InternalAction.class));
             try {
                 triggerOperator.registerTrigger(actionInstance.getGroup(), actionInstance.getFenzoTrigger());
             } catch (SchedulerException e) {
@@ -165,6 +166,9 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
         }
         if (actionInstance.getAction() == null) {
             throw new IllegalArgumentException("No Action class specified for the actionInstance");
+        }
+        if (actionInstance.getTrigger() != null) {
+            actionInstance.getTrigger().validate();
         }
     }
 

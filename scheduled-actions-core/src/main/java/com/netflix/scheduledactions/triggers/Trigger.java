@@ -9,5 +9,7 @@ import rx.functions.Action1;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public interface Trigger {
-    public com.netflix.fenzo.triggers.Trigger<Context> createFenzoTrigger(Context context, Class<? extends Action1<Context>> action);
+    public void validate() throws IllegalArgumentException;
+    public com.netflix.fenzo.triggers.Trigger<Context> createFenzoTrigger(Context context,
+                                                                          Class<? extends Action1<Context>> action);
 }
