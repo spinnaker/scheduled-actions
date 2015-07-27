@@ -30,9 +30,9 @@ import java.util.Map;
 @RestController
 public class CronExpressionController {
 
-    @RequestMapping(value = "/validateCronExpression/{cronExpression}", method = RequestMethod.GET)
+    @RequestMapping(value = "/validateCronExpression", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
-    public Map<String,String> actionInstances(@PathVariable String cronExpression) {
+    public Map<String,String> actionInstances(@RequestParam String cronExpression) {
         try {
             TriggerUtils.validateCronExpression(cronExpression);
             return ImmutableMap.<String,String>builder().put("response", "Cron expression is valid").build();
