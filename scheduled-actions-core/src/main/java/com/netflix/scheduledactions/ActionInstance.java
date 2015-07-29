@@ -9,13 +9,14 @@ import java.util.*;
  * @author sthadeshwar
  */
 @JsonDeserialize(builder = ActionInstance.ActionInstanceBuilder.class)
-public class ActionInstance {
+public class ActionInstance implements Comparable<ActionInstance> {
 
     public static final String DEFAULT_GROUP = "DEFAULT_GROUP";
     public static final Class<? extends ExecutionListener> DEFAULT_EXECUTION_LISTENER_CLASS = NoOpExecutionListener.class;
     public static final long DEFAULT_EXECUTION_TIMEOUT = -1L;
     public static final ConcurrentExecutionStrategy DEFAULT_EXECUTION_STRATEGY = ConcurrentExecutionStrategy.REJECT;
 
+    private long creationTime;
     private String id;
     private String name;
     private String group;
@@ -35,6 +36,7 @@ public class ActionInstance {
     private ActionInstance() {}
 
     private ActionInstance(ActionInstanceBuilder builder) {
+        this.creationTime = builder.creationTime;
         this.id = builder.id;
         this.name = builder.name;
         this.group = builder.group;
@@ -173,6 +175,19 @@ public class ActionInstance {
         this.fenzoTrigger = fenzoTrigger;
     }
 
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    @Override
+    public int compareTo(ActionInstance o) {
+        if (o != null) {
+            return this.creationTime - o.creationTime == 0 ?  0 :
+                   this.creationTime - o.creationTime  < 0 ? -1 : 1;
+        }
+        return 0;
+    }
+
     public static ActionInstanceBuilder newActionInstance() {
         return new ActionInstanceBuilder();
     }
@@ -197,6 +212,7 @@ public class ActionInstance {
     }
 
     public static class ActionInstanceBuilder {
+        private long creationTime;
         private String id;
         private String name;
         private String group = DEFAULT_GROUP;
@@ -272,6 +288,7 @@ public class ActionInstance {
 
         public ActionInstance build() {
             this.context = new Context(id, name, group, parameters);
+            this.creationTime = System.currentTimeMillis();
             return new ActionInstance(this);
         }
     }

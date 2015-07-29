@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @author sthadeshwar
  */
-public class Execution {
+public class Execution implements Comparable<Execution> {
 
     private final String executorId;
     private final String actionInstanceId;
@@ -33,7 +33,7 @@ public class Execution {
                      @JsonProperty("actionInstanceId") String actionInstanceId) {
         this.executorId = executorId;
         this.actionInstanceId = actionInstanceId;
-        this.createdTime = System.nanoTime();   // Used just for comparing in isBefore()
+        this.createdTime = System.nanoTime();   // Used just for comparing
     }
 
     public String getExecutorId() {
@@ -81,6 +81,7 @@ public class Execution {
     }
 
     public List<LogEntry> getLog() {
+        if (log != null) Collections.sort(log);
         return log;
     }
 
@@ -96,8 +97,17 @@ public class Execution {
         return String.format("%s|%s", id, createdTime);
     }
 
+    @Override
+    public int compareTo(Execution o) {
+        if (o != null) {
+            return this.createdTime - o.createdTime == 0 ?  0 :
+                   this.createdTime - o.createdTime  < 0 ? -1 : 1;
+        }
+        return 0;
+    }
+
     public class Logger {
-        private final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+        private final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss z";
 
         private Logger() {
             log = Collections.synchronizedList(new ArrayList<LogEntry>());
@@ -123,13 +133,15 @@ public class Execution {
         }
     }
 
-    public static class LogEntry {
+    public static class LogEntry implements Comparable<LogEntry> {
+        private final long logEntryTime;
         private final String timestamp;
         private final String message;
 
         @JsonCreator
         public LogEntry(@JsonProperty("timestamp") String timestamp,
                         @JsonProperty("message") String message) {
+            this.logEntryTime = System.currentTimeMillis();
             this.timestamp = timestamp;
             this.message = message;
         }
@@ -140,6 +152,15 @@ public class Execution {
 
         public String getMessage() {
             return message;
+        }
+
+        @Override
+        public int compareTo(LogEntry that) {
+            if (that != null) {
+                return this.logEntryTime == that.logEntryTime ?  0 :
+                       this.logEntryTime  < that.logEntryTime ? -1 : 1;
+            }
+            return 0;
         }
     }
 }

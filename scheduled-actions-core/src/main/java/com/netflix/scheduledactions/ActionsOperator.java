@@ -10,6 +10,7 @@ import com.netflix.scheduledactions.persistence.ExecutionDao;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -107,11 +108,15 @@ public class ActionsOperator {
 
     /**
      * Returns a list of {@code ActionInstance}s registered with the {@code ActionsOperator} for the given actionInstanceGroup
-     * @param actionInstanceGroup
+     * @param group
      * @return
      */
-    public List<ActionInstance> getActionInstances(String actionInstanceGroup) {
-        return actionInstanceDao.getActionInstances(actionInstanceGroup);
+    public List<ActionInstance> getActionInstances(String group) {
+        List<ActionInstance> actionInstances = actionInstanceDao.getActionInstances(group);
+        if (actionInstances != null) {
+            Collections.sort(actionInstances);
+        }
+        return actionInstances;
     }
 
     /**
@@ -119,7 +124,11 @@ public class ActionsOperator {
      * @return
      */
     public List<ActionInstance> getActionInstances() {
-        return actionInstanceDao.getActionInstances();
+        List<ActionInstance> actionInstances = actionInstanceDao.getActionInstances();
+        if (actionInstances != null) {
+            Collections.sort(actionInstances);
+        }
+        return actionInstances;
     }
 
     /**
@@ -137,7 +146,11 @@ public class ActionsOperator {
      * @return
      */
     public List<Execution> getExecutions(String actionInstanceId) {
-        return executionDao.getExecutions(actionInstanceId);
+        List<Execution> executions = executionDao.getExecutions(actionInstanceId);
+        if (executions != null) {
+            Collections.sort(executions);
+        }
+        return executions;
     }
 
     /**

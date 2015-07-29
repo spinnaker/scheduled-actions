@@ -64,8 +64,12 @@ public class ActionInstanceController {
     }
 
     @RequestMapping(value = "/scheduledActions", method = RequestMethod.GET)
-    public List<ActionInstance> actionInstances(@RequestParam String actionInstanceGroup) {
-        return actionsOperator.getActionInstances(actionInstanceGroup);
+    public List<ActionInstance> actionInstances(@RequestParam(required = false) String group) {
+        if (group != null) {
+            return actionsOperator.getActionInstances(group);
+        } else {
+            return actionsOperator.getActionInstances();
+        }
     }
 
     @RequestMapping(value = "/scheduledActions/{id}", method = RequestMethod.GET)
