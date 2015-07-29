@@ -44,7 +44,7 @@ import java.util.List;
  */
 public class ThriftCassandraDao<T> implements CassandraDao<T> {
 
-    public static final String GLOBAL_GROUP = "all";
+    public static final String ALL = "all";
 
     private final Class<T> parameterClass;
     private final Keyspace keyspace;
@@ -112,7 +112,7 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
             byte[] bytes = codec.compress(objectMapper.writeValueAsBytes(value));
             MutationBatch m = prepareAtomicMutationBatch();
             m.withRow(columnFamily, id).putColumn(id, bytes);
-            m.withRow(columnFamily, GLOBAL_GROUP).putColumn(id, new byte[0]);
+            m.withRow(columnFamily, ALL).putColumn(id, new byte[0]);
             m.execute();
         } catch (ConnectionException | IOException e) {
             throw new RuntimeException(String.format("Exception occurred while upserting value for '%s'", id), e);
@@ -126,6 +126,7 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
             MutationBatch m = prepareAtomicMutationBatch();
             m.withRow(columnFamily, id).putColumn(id, bytes);
             m.withRow(columnFamily, group).putColumn(id, new byte[0]);
+            m.withRow(columnFamily, ALL).putColumn(id, new byte[0]);
             m.execute();
         } catch (ConnectionException | IOException e) {
             throw new RuntimeException(String.format("Exception occurred while upserting value for '%s' and group '%s'", id, group), e);
@@ -136,7 +137,7 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
     public void delete(String id) {
         try {
             MutationBatch m = prepareAtomicMutationBatch();
-            m.withRow(columnFamily, GLOBAL_GROUP).deleteColumn(id);
+            m.withRow(columnFamily, ALL).deleteColumn(id);
             m.withRow(columnFamily, id).delete();
             m.execute();
         } catch (ConnectionException e) {
@@ -149,6 +150,7 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
         try {
             MutationBatch m = prepareAtomicMutationBatch();
             m.withRow(columnFamily, group).deleteColumn(id);
+            m.withRow(columnFamily, ALL).deleteColumn(id);
             m.withRow(columnFamily, id).delete();
             m.execute();
         } catch (ConnectionException e) {
@@ -197,7 +199,7 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
 
     @Override
     public List<T> getAll() {
-        return getGroup(GLOBAL_GROUP);
+        return getGroup(ALL);
     }
 
     private MutationBatch prepareAtomicMutationBatch() {
