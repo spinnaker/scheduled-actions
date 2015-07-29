@@ -33,9 +33,4 @@ public interface Action {
      */
     public void execute(Context context, Execution execution) throws Exception;
 
-    /**
-     * An action can return execution log
-     * @return
-     */
-    public List<String> getExecutionLog();
 }

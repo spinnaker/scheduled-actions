@@ -50,7 +50,8 @@ public class LocalThreadPoolBlockingExecutor implements Executor {
                     executionDao.updateExecution(execution);
 
                     // Executing the action
-                    logger.info("Executing action {} for execution {}...", action, execution);
+                    logger.info("[{}] Execution started for action {}", actionInstance.getId(),
+                        action.getClass().getSimpleName());
                     action.execute(context, execution);
 
                 } catch (Exception e) {
@@ -74,7 +75,8 @@ public class LocalThreadPoolBlockingExecutor implements Executor {
             execution.setStatus(action.getStatus() != null ? action.getStatus() : Status.COMPLETED);
             executionDao.updateExecution(execution);
 
-            logger.info("Action {} for execution {} completely successfully", action, execution);
+            logger.info("[{}] Execution completed for action {} with status: {}", actionInstance.getId(),
+                action.getClass().getSimpleName(), execution.getStatus());
 
             executionListener.onComplete(context, execution);
 

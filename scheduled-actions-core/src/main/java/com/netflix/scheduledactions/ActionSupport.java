@@ -22,9 +22,4 @@ public abstract class ActionSupport implements Action {
         return null;
     }
 
-    @Override
-    public List<String> getExecutionLog() {
-        return null;
-    }
-
 }
