@@ -23,7 +23,7 @@ public class CronTrigger implements Trigger {
         this.startAt = startAt;
     }
 
-    public CronTrigger(@JsonProperty("cronExpression") String cronExpression) {
+    public CronTrigger(String cronExpression) {
         this.cronExpression = cronExpression;
         this.startAt = new Date();
     }
@@ -43,6 +43,10 @@ public class CronTrigger implements Trigger {
 
     public String getCronExpression() {
         return cronExpression;
+    }
+
+    public Date getStartAt() {
+        return startAt;
     }
 
     @Override
