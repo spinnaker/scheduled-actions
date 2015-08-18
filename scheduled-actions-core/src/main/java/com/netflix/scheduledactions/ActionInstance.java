@@ -291,6 +291,16 @@ public class ActionInstance implements Comparable<ActionInstance> {
             this.creationTime = System.currentTimeMillis();
             return new ActionInstance(this);
         }
+
+        /**
+         * Do NOT use. For internal (unit testing) use only
+         * @return
+         */
+        public ActionInstance build(long creationTime) {
+            this.context = new Context(id, name, group, parameters);
+            this.creationTime = creationTime;
+            return new ActionInstance(this);
+        }
     }
 
     public static class NoOpExecutionListener implements ExecutionListener {
