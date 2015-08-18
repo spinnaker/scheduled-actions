@@ -17,6 +17,8 @@ import java.util.List;
  */
 public class Execution implements Comparable<Execution> {
 
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss z";
+
     private final String executorId;
     private final String actionInstanceId;
     private final long createdTime;
@@ -93,6 +95,14 @@ public class Execution implements Comparable<Execution> {
         return this.createdTime - execution.getCreatedTime() < 0;
     }
 
+    public String getHumanReadableStartTime() {
+        return startTime != null ? new SimpleDateFormat(DATE_FORMAT).format(startTime) : "";
+    }
+
+    public String getHumanReadableEndTime() {
+        return endTime != null ? new SimpleDateFormat(DATE_FORMAT).format(endTime) : "";
+    }
+
     public String toString() {
         return String.format("%s|%s", id, createdTime);
     }
@@ -107,7 +117,7 @@ public class Execution implements Comparable<Execution> {
     }
 
     public class Logger {
-        private final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss z";
+        private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss z";
 
         private Logger() {
             log = Collections.synchronizedList(new ArrayList<LogEntry>());

@@ -120,6 +120,7 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
         public void call(Context context) {
             String actionInstanceId = context.getActionInstanceId();
             try {
+                logger.info("[{}] InternalAction: Calling execute() on delegate with context: {}", actionInstanceId, context);
                 actionOperationsDelegate.execute(actionInstanceId, "ScheduledTrigger"); // TODO: Pass trigger info from context
             } catch (ActionInstanceNotFoundException e) {}
         }
@@ -312,28 +313,41 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
             return null;
         }
 
-        final Execution execution = new Execution(delegateId, actionInstance.getId());
-        executionDao.createExecution(actionInstance.getId(), execution);
+        final String actionInstanceId = actionInstance.getId();
+        final Execution execution = new Execution(delegateId, actionInstanceId);
+        final String executionId = executionDao.createExecution(actionInstanceId, execution);
 
-        List<Execution> previousExecutions = getInCompleteExecutionsBefore(actionInstance.getId(), execution);
+        logger.info("[{}] Created execution for actionInstance: {}", actionInstanceId, executionId);
+        execution.getLogger().info(String.format("Created execution %s", executionId));
+
+        List<Execution> previousExecutions = getInCompleteExecutionsBefore(actionInstanceId, execution);
         if (previousExecutions.size() > 0) {
             ConcurrentExecutionStrategy strategy = actionInstance.getConcurrentExecutionStrategy();
             switch (strategy) {
                 case ALLOW:
-                    logger.info("ActionInstance {} concurrent execution strategy is: ALLOW - creating execution", actionInstance);
+                    execution.getLogger().info("Concurrent execution strategy is: ALLOW, allowing execution...");
+                    logger.info("[{}] actionInstance concurrent execution strategy is: ALLOW, allowing execution...",
+                        actionInstanceId);
                     break;
                 case REJECT:
                     Status status = Status.SKIPPED;
                     status.setMessage(
-                        String.format("ConcurrentExecutionStrategy for ActionInstance %s is REJECT and it has incomplete executions", actionInstance));
+                        String.format(
+                            "ConcurrentExecutionStrategy for ActionInstance %s is REJECT and it has incomplete executions",
+                            actionInstance
+                        )
+                    );
                     execution.setStatus(status);
                     execution.setStartTime(new Date());
                     execution.setEndTime(new Date());
-                    logger.info("ActionInstance {} concurrent execution strategy is: REJECT - skipping execution", actionInstance);
+                    logger.info("[{}] actionInstance concurrent execution strategy is: REJECT, skipping execution",
+                        actionInstanceId);
+                    execution.getLogger().info("Concurrent execution strategy is: REJECT, skipping execution");
                     executionDao.updateExecution(execution);
                     return execution;
                 case REPLACE:
-                    logger.info("ActionInstance {} concurrent execution strategy is: REPLACE - cancelling previous execution(s)", actionInstance);
+                    logger.info("[{}] actionInstance concurrent execution strategy is: REPLACE, cancelling previous execution(s)",
+                        actionInstanceId);
                     cancelPreviousExecutions(actionInstance, execution);
                     break;
                 default:
@@ -341,21 +355,34 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
             }
         }
 
+        logger.info("[{}] Submitting runnable for execution: {}", actionInstanceId, executionId);
+
         executeService.submit(new Runnable() {
             @Override
             public void run() {
                 try {
                     Action action = newInstance(actionInstance);
-                    logger.info("Executing action {} for execution {} ...", action, execution);
+                    execution.getLogger().info("Calling executor.execute()...");
+                    logger.info("[{}] Calling executor.execute() for execution {} ...", actionInstanceId, executionId);
                     executor.execute(action, actionInstance, execution);
                 } catch (ExecutionException e) {
                     Status status = e.getStatus() != null ? e.getStatus() : Status.FAILED;
                     status.setMessage(e.getMessage());
                     execution.setEndTime(new Date());
                     execution.setStatus(status);
+                    execution.getLogger().error(
+                        String.format("Exception occurred while executing action: %s", e.getMessage())
+                    );
                 } catch (Exception e) {
                     Status status = Status.FAILED;
-                    status.setMessage(String.format("Exception occurred while executing action %s: %s", actionInstance.getAction(), e.getMessage()));
+                    status.setMessage(
+                        String.format(
+                            "Exception occurred while executing action %s: %s", actionInstance.getAction(), e.getMessage()
+                        )
+                    );
+                    execution.getLogger().error(
+                        String.format("Exception occurred while executing action: %s", e.getMessage())
+                    );
                     execution.setEndTime(new Date());
                     execution.setStatus(status);
                 } finally {

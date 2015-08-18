@@ -61,4 +61,10 @@ public class Context {
       return parameters;
     }
 
+    @Override
+    public String toString() {
+        return String.format(
+            "Context: (actionInstance: %s, name: %s, group: %s, parameters: %s)", actionInstanceId, name, group, parameters
+        );
+    }
 }
