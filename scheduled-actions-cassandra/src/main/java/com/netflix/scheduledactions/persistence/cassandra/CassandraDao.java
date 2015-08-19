@@ -24,8 +24,8 @@ import java.util.List;
 public interface CassandraDao<T> {
 
     public void createColumnFamily();
-    public void upsert(String id, T value);
-    public void upsertToGroup(String group, String id, T value);
+    public void upsert(String id, T value, Integer ttlSeconds);
+    public void upsertToGroup(String group, String id, T value, Integer ttlSeconds);
     public void delete(String id);
     public void deleteFromGroup(String group, String id);
     public T get(String id);

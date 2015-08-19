@@ -22,10 +22,7 @@ import com.netflix.astyanax.MutationBatch;
 import com.netflix.astyanax.connectionpool.exceptions.ConnectionException;
 import com.netflix.astyanax.connectionpool.exceptions.NotFoundException;
 import com.netflix.astyanax.ddl.ColumnFamilyDefinition;
-import com.netflix.astyanax.model.Column;
-import com.netflix.astyanax.model.ColumnFamily;
-import com.netflix.astyanax.model.Row;
-import com.netflix.astyanax.model.Rows;
+import com.netflix.astyanax.model.*;
 import com.netflix.astyanax.query.RowQuery;
 import com.netflix.astyanax.query.RowSliceQuery;
 import com.netflix.astyanax.serializers.ByteBufferSerializer;
@@ -36,7 +33,6 @@ import com.netflix.scheduledactions.persistence.SnappyCodec;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -107,12 +103,12 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
     }
 
     @Override
-    public void upsert(String id, T value) {
+    public void upsert(String id, T value, Integer ttlSeconds) {
         try {
             byte[] bytes = codec.compress(objectMapper.writeValueAsBytes(value));
             MutationBatch m = prepareAtomicMutationBatch();
-            m.withRow(columnFamily, id).putColumn(id, bytes);
-            m.withRow(columnFamily, ALL).putColumn(id, new byte[0]);
+            m.withRow(columnFamily, id).putColumn(id, bytes, ttlSeconds);
+            m.withRow(columnFamily, ALL).putColumn(id, new byte[0], ttlSeconds);
             m.execute();
         } catch (ConnectionException | IOException e) {
             throw new RuntimeException(String.format("Exception occurred while upserting value for '%s'", id), e);
@@ -120,13 +116,13 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
     }
 
     @Override
-    public void upsertToGroup(String group, String id, T value) {
+    public void upsertToGroup(String group, String id, T value, Integer ttlSeconds) {
         try {
             byte[] bytes = codec.compress(objectMapper.writeValueAsBytes(value));
             MutationBatch m = prepareAtomicMutationBatch();
-            m.withRow(columnFamily, id).putColumn(id, bytes);
-            m.withRow(columnFamily, group).putColumn(id, new byte[0]);
-            m.withRow(columnFamily, ALL).putColumn(id, new byte[0]);
+            m.withRow(columnFamily, id).putColumn(id, bytes, ttlSeconds);
+            m.withRow(columnFamily, group).putColumn(id, new byte[0], ttlSeconds);
+            m.withRow(columnFamily, ALL).putColumn(id, new byte[0], ttlSeconds);
             m.execute();
         } catch (ConnectionException | IOException e) {
             throw new RuntimeException(String.format("Exception occurred while upserting value for '%s' and group '%s'", id, group), e);
@@ -177,9 +173,17 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
             List<T> list = new ArrayList<>();
 
             // Get all the row keys
-            RowQuery<String, String> rowQuery = keyspace.prepareQuery(columnFamily).getKey(group);
-            rowQuery.autoPaginate(true).withColumnRange(new RangeBuilder().setLimit(10).setReversed(true).build());
-            Collection<String> rowKeys = rowQuery.execute().getResult().getColumnNames();
+            RowQuery<String, String> rowQuery = keyspace.prepareQuery(columnFamily).getKey(group)
+                .autoPaginate(true)
+                .withColumnRange(new RangeBuilder().setLimit(1000).build());
+
+            List<String> rowKeys = new ArrayList<>();
+            ColumnList<String> columns;
+            while (!(columns = rowQuery.execute().getResult()).isEmpty()) {
+                for (Column<String> c : columns) {
+                    rowKeys.add(c.getName());
+                }
+            }
 
             // Get values for all the fetched row keys
             RowSliceQuery<String, String> rowSliceQuery = keyspace.prepareQuery(columnFamily).getKeySlice(rowKeys);

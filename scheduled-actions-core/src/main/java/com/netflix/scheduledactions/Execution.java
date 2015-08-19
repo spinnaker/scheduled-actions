@@ -109,8 +109,8 @@ public class Execution implements Comparable<Execution> {
     @Override
     public int compareTo(Execution o) {
         if (o != null) {
-            return this.createdTime - o.createdTime == 0 ?  0 :
-                   this.createdTime - o.createdTime  < 0 ? -1 : 1;
+            return this.createdTime - o.getCreatedTime() < 0 ? -1 :
+                   this.createdTime - o.getCreatedTime() > 0 ?  1 : 0;
         }
         return 0;
     }

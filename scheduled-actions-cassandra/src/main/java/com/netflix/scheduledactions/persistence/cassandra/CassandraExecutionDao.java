@@ -31,6 +31,7 @@ import java.util.UUID;
 public class CassandraExecutionDao implements ExecutionDao {
 
     private final CassandraDao<Execution> cassandraDao;
+    private static final int TTL_SECONDS = 60 * 60 * 24;
 
     public CassandraExecutionDao(Keyspace keyspace) {
         this.cassandraDao = new ThriftCassandraDao(Execution.class, keyspace, new ScheduledActionsObjectMapper());
@@ -44,13 +45,13 @@ public class CassandraExecutionDao implements ExecutionDao {
     @Override
     public String createExecution(String actionInstanceId, Execution execution) {
         execution.setId(UUID.randomUUID().toString());
-        cassandraDao.upsertToGroup(actionInstanceId, execution.getId(), execution);
+        cassandraDao.upsertToGroup(actionInstanceId, execution.getId(), execution, Integer.valueOf(TTL_SECONDS));
         return execution.getId();
     }
 
     @Override
     public void updateExecution(Execution execution) {
-        cassandraDao.upsert(execution.getId(), execution);
+        cassandraDao.upsert(execution.getId(), execution, Integer.valueOf(TTL_SECONDS));
     }
 
     @Override

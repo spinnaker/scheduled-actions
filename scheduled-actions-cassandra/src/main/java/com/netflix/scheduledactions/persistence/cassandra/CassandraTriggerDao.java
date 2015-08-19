@@ -30,13 +30,13 @@ public class CassandraTriggerDao implements TriggerDao {
     @Override
     public String createTrigger(String triggerGroup, Trigger trigger) {
         trigger.setId(UUID.randomUUID().toString());
-        cassandraDao.upsertToGroup(triggerGroup, trigger.getId(), trigger);
+        cassandraDao.upsertToGroup(triggerGroup, trigger.getId(), trigger, null);
         return trigger.getId();
     }
 
     @Override
     public void updateTrigger(Trigger trigger) {
-        cassandraDao.upsert(trigger.getId(), trigger);
+        cassandraDao.upsert(trigger.getId(), trigger, null);
     }
 
     @Override
