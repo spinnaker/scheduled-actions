@@ -6,11 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author sthadeshwar
@@ -18,6 +16,7 @@ import java.util.List;
 public class Execution implements Comparable<Execution> {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss z";
+    private static final String DATE_FORMAT_TIMEZONE = "America/Los_Angeles";
 
     private final String executorId;
     private final String actionInstanceId;
@@ -96,11 +95,11 @@ public class Execution implements Comparable<Execution> {
     }
 
     public String getHumanReadableStartTime() {
-        return startTime != null ? new SimpleDateFormat(DATE_FORMAT).format(startTime) : "";
+        return startTime != null ? getFormattedDate(startTime) : "";
     }
 
     public String getHumanReadableEndTime() {
-        return endTime != null ? new SimpleDateFormat(DATE_FORMAT).format(endTime) : "";
+        return endTime != null ? getFormattedDate(endTime) : "";
     }
 
     public String toString() {
@@ -117,30 +116,41 @@ public class Execution implements Comparable<Execution> {
     }
 
     public class Logger {
-        private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss z";
-
         private Logger() {
             log = Collections.synchronizedList(new ArrayList<LogEntry>());
         }
 
         public void info(String info) {
-            log.add(new LogEntry(new SimpleDateFormat(DATE_FORMAT).format(new Date()), info));
+            log.add(new LogEntry(getFormattedDate(), info));
         }
 
         public void warn(String warn) {
-            log.add(new LogEntry(new SimpleDateFormat(DATE_FORMAT).format(new Date()), warn));
+            log.add(new LogEntry(getFormattedDate(), warn));
         }
 
         public void error(String error) {
-            log.add(new LogEntry(new SimpleDateFormat(DATE_FORMAT).format(new Date()), error));
+            log.add(new LogEntry(getFormattedDate(), error));
         }
 
         public void error(String error, Throwable throwable) {
             StringWriter stringWriter = new StringWriter();
             throwable.printStackTrace(new PrintWriter(stringWriter));
-            log.add(new LogEntry(new SimpleDateFormat(DATE_FORMAT).format(new Date()),
-                String.format("%s : %s", new SimpleDateFormat(DATE_FORMAT).format(new Date()), error, stringWriter.toString())));
+            log.add(new LogEntry(getFormattedDate(), String.format("%s : %s", error, stringWriter.toString())));
         }
+    }
+
+    private static DateFormat newDateFormat() {
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        dateFormat.setTimeZone(TimeZone.getTimeZone(DATE_FORMAT_TIMEZONE));
+        return dateFormat;
+    }
+
+    private static String getFormattedDate() {
+        return newDateFormat().format(new Date());
+    }
+
+    private static String getFormattedDate(Date date) {
+        return newDateFormat().format(date);
     }
 
     public static class LogEntry implements Comparable<LogEntry> {

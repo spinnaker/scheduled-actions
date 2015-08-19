@@ -370,9 +370,7 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
                     status.setMessage(e.getMessage());
                     execution.setEndTime(new Date());
                     execution.setStatus(status);
-                    execution.getLogger().error(
-                        String.format("Exception occurred while executing action: %s", e.getMessage())
-                    );
+                    execution.getLogger().error("Exception occurred while executing action", e);
                 } catch (Exception e) {
                     Status status = Status.FAILED;
                     status.setMessage(
@@ -380,9 +378,7 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
                             "Exception occurred while executing action %s: %s", actionInstance.getAction(), e.getMessage()
                         )
                     );
-                    execution.getLogger().error(
-                        String.format("Exception occurred while executing action: %s", e.getMessage())
-                    );
+                    execution.getLogger().error("Exception occurred while executing action", e);
                     execution.setEndTime(new Date());
                     execution.setStatus(status);
                 } finally {
