@@ -94,11 +94,11 @@ public class Execution implements Comparable<Execution> {
         return this.createdTime - execution.getCreatedTime() < 0;
     }
 
-    public String getHumanReadableStartTime() {
+    public String getFormattedStartTime() {
         return startTime != null ? getFormattedDate(startTime) : "";
     }
 
-    public String getHumanReadableEndTime() {
+    public String getFormattedEndTime() {
         return endTime != null ? getFormattedDate(endTime) : "";
     }
 
