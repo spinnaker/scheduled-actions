@@ -49,32 +49,22 @@ public class ThriftCassandraDao<T> implements CassandraDao<T> {
     private final ColumnFamily<String, String> columnFamily;
 
     public ThriftCassandraDao(Class<T> parameterClass, Keyspace keyspace, ObjectMapper objectMapper) {
-        this.parameterClass = parameterClass;
-        this.keyspace = keyspace;
-        this.objectMapper = objectMapper;
-        this.codec = new SnappyCodec();
-        this.columnFamily = ColumnFamily.newColumnFamily(
-            toTitleCase(this.parameterClass.getSimpleName()),
-            StringSerializer.get(),
-            StringSerializer.get(),
-            ByteBufferSerializer.get()
-        );
+        this(parameterClass, keyspace, objectMapper, new SnappyCodec(), toTitleCase(parameterClass.getSimpleName()));
     }
 
     public ThriftCassandraDao(Class<T> parameterClass, Keyspace keyspace, ObjectMapper objectMapper, Codec codec) {
-        this.parameterClass = parameterClass;
-        this.keyspace = keyspace;
-        this.objectMapper = objectMapper;
-        this.codec = codec;
-        this.columnFamily = ColumnFamily.newColumnFamily(
-            toTitleCase(this.parameterClass.getSimpleName()),
-            StringSerializer.get(),
-            StringSerializer.get(),
-            ByteBufferSerializer.get()
-        );
+        this(parameterClass, keyspace, objectMapper, codec, toTitleCase(parameterClass.getSimpleName()));
     }
 
-    public ThriftCassandraDao(Class<T> parameterClass, Keyspace keyspace, ObjectMapper objectMapper, Codec codec, String columnFamilyName) {
+    public ThriftCassandraDao(Class<T> parameterClass, Keyspace keyspace, ObjectMapper objectMapper, String columnFamilyName) {
+        this(parameterClass, keyspace, objectMapper, new SnappyCodec(), columnFamilyName);
+    }
+
+    public ThriftCassandraDao(Class<T> parameterClass,
+                              Keyspace keyspace,
+                              ObjectMapper objectMapper,
+                              Codec codec,
+                              String columnFamilyName) {
         this.parameterClass = parameterClass;
         this.keyspace = keyspace;
         this.objectMapper = objectMapper;
