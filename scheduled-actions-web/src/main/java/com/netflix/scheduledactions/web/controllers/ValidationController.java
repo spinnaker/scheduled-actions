@@ -24,15 +24,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 /**
- * A controller class to simply do a cron expression validation
+ * Controller that does different {@link com.netflix.scheduledactions.triggers.Trigger} attributes validation
  * @author sthadeshwar
  */
 @RestController
-public class CronExpressionController {
+public class ValidationController {
 
     @RequestMapping(value = "/validateCronExpression", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
-    public Map<String,String> actionInstances(@RequestParam String cronExpression) {
+    public Map<String,String> validateCronExpression(@RequestParam String cronExpression) {
         try {
             TriggerUtils.validateCronExpression(cronExpression);
             return ImmutableMap.<String,String>builder().put("response", "Cron expression is valid").build();
@@ -43,9 +43,29 @@ public class CronExpressionController {
         }
     }
 
+    @RequestMapping(value = "/validateISO8601Interval", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.OK)
+    public Map<String,String> validateISO8601Interval(@RequestParam String iso8601Interval) {
+        try {
+            TriggerUtils.validateISO8601Interval(iso8601Interval);
+            return ImmutableMap.<String,String>builder().put("response", "ISO8601 interval format is valid").build();
+        } catch (IllegalArgumentException e) {
+            throw new InvalidISO8601IntervalException(
+                String.format("ISO8601 interval format '%s' is not valid: %s", iso8601Interval, e.getMessage())
+            );
+        }
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public static class InvalidCronExpressionException extends IllegalArgumentException {
         public InvalidCronExpressionException(String message) {
+            super(message);
+        }
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public static class InvalidISO8601IntervalException extends IllegalArgumentException {
+        public InvalidISO8601IntervalException(String message) {
             super(message);
         }
     }
