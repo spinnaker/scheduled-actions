@@ -31,8 +31,8 @@ import java.util.Date;
  */
 public class IntervalTrigger implements Trigger {
 
-    public static final String ISO_8601_TIME_PREFIX = "PT";
-    public static final String ISO_8601_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssXXX";
+    private static final String ISO_8601_TIME_PREFIX = "PT";
+    private static final String ISO_8601_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssXXX";
 
     public static enum TimeUnit {
         SECONDS("S"), MINUTES("M"), HOURS("H");
@@ -110,5 +110,13 @@ public class IntervalTrigger implements Trigger {
         return new com.netflix.fenzo.triggers.IntervalTrigger<>(
             this.iso8601Interval, this.repeatCount, context.getName(), context, Context.class, action
         );
+    }
+
+    public String getIso8601Interval() {
+        return iso8601Interval;
+    }
+
+    public int getRepeatCount() {
+        return repeatCount;
     }
 }
