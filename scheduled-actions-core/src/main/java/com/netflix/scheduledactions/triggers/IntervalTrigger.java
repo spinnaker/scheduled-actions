@@ -54,6 +54,10 @@ public class IntervalTrigger implements Trigger {
         this.repeatCount = repeatCount;
     }
 
+    public IntervalTrigger(int interval, TimeUnit intervalUnit, Date startAt) {
+        this(interval, intervalUnit, -1, startAt);
+    }
+
     public IntervalTrigger(int interval, TimeUnit intervalUnit, int repeatCount, Date startAt) {
         if (interval <= 0) {
             throw new IllegalArgumentException(String.format("Invalid interval %s specified for the IntervalTrigger", interval));
