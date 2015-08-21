@@ -47,6 +47,11 @@ public class IntervalTrigger implements Trigger {
     private final String iso8601Interval;
     private final int repeatCount;
 
+    /**
+     * Creates an interval trigger based on the given ISO-8601 standard interval expression
+     * @param iso8601Interval
+     * @param repeatCount
+     */
     @JsonCreator
     public IntervalTrigger(@JsonProperty("iso8601Interval") String iso8601Interval,
                            @JsonProperty("repeatCount") int repeatCount) {
@@ -54,16 +59,40 @@ public class IntervalTrigger implements Trigger {
         this.repeatCount = repeatCount;
     }
 
+    /**
+     * Creates an interval trigger that repeats indefinitely
+     * @param interval
+     * @param intervalUnit
+     * @param startAt
+     */
     public IntervalTrigger(int interval, TimeUnit intervalUnit, Date startAt) {
         this(interval, intervalUnit, -1, startAt);
     }
 
+    /**
+     * Creates an interval trigger that starts immediately and repeats indefinitely
+     * @param interval
+     * @param intervalUnit
+     */
+    public IntervalTrigger(int interval, TimeUnit intervalUnit) {
+        this(interval, intervalUnit, -1, null);
+    }
+
+    /**
+     * Creates an interval trigger based on the given parameters
+     * @param interval
+     * @param intervalUnit
+     * @param repeatCount
+     * @param startAt
+     */
     public IntervalTrigger(int interval, TimeUnit intervalUnit, int repeatCount, Date startAt) {
         if (interval <= 0) {
             throw new IllegalArgumentException(String.format("Invalid interval %s specified for the IntervalTrigger", interval));
         }
+        if (startAt == null) {
+            startAt = new Date();
+        }
         DateFormat dateFormat = new SimpleDateFormat(ISO_8601_DATE_FORMAT);
-        if (startAt == null) startAt = new Date();
         this.iso8601Interval = String.format(
             "%s/%s%s%s", dateFormat.format(startAt), ISO_8601_TIME_PREFIX, interval, intervalUnit.getTimeUnitSuffix()
         );
