@@ -18,9 +18,6 @@ package com.netflix.scheduledactions.persistence.cassandra;
 
 import java.util.List;
 
-/**
- * @author sthadeshwar
- */
 public interface CassandraDao<T> {
 
     public void createColumnFamily();

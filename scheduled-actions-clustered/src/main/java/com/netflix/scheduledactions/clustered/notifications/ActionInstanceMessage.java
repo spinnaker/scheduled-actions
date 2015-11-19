@@ -18,9 +18,6 @@ package com.netflix.scheduledactions.clustered.notifications;
 
 import com.netflix.scheduledactions.clustered.Status;
 
-/**
- * @author sthadeshwar
- */
 public class ActionInstanceMessage {
     private final String actionInstanceId;
     private final Status status;

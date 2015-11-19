@@ -21,9 +21,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * @author sthadeshwar
- */
 public abstract class AbstractInMemoryDao<T> {
 
     public static final String SEPARATOR = ":";

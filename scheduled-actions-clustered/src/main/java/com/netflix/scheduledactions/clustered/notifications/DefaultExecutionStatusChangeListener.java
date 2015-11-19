@@ -23,9 +23,6 @@ import com.netflix.scheduledactions.clustered.ClusterMediator;
 import com.netflix.scheduledactions.persistence.ActionInstanceDao;
 import com.netflix.scheduledactions.persistence.ExecutionDao;
 
-/**
- * @author sthadeshwar
- */
 public class DefaultExecutionStatusChangeListener implements ExecutionStatusChangeListener {
 
     private final ExecutionDao executionDao;

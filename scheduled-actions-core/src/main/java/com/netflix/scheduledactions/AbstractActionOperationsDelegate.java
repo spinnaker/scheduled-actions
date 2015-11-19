@@ -35,9 +35,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * @author sthadeshwar
- */
 public class AbstractActionOperationsDelegate implements ActionOperationsDelegate {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultActionOperationsDelegate.class);
@@ -126,10 +123,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
         }
     }
 
-    /**
-     *
-     * @param actionInstance
-     */
     @Override
     public void update(ActionInstance actionInstance) {
         // Find an existing one to update
@@ -153,10 +146,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
         logger.info("Successfully updated the actionInstance {}", actionInstance);
     }
 
-    /**
-     *
-     * @param actionInstance
-     */
     @Override
     public void validate(ActionInstance actionInstance) {
         if (actionInstance == null) {
@@ -175,7 +164,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
 
     /**
      * Disables the {@code ActionInstance}. If the {@code ActionInstance} is disabled it will NOT execute
-     * @param actionInstanceId
      * @throws ActionInstanceNotFoundException
      * @throws com.netflix.scheduledactions.exceptions.ActionOperationException
      */
@@ -192,7 +180,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
 
     /**
      * Disables the {@code ActionInstance}. If the {@code ActionInstance} is disabled it will NOT execute
-     * @param actionInstance
      * @throws ActionInstanceNotFoundException
      * @throws com.netflix.scheduledactions.exceptions.ActionOperationException
      */
@@ -213,7 +200,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
 
     /**
      * Enables the {@code ActionInstance} associated with this actionInstanceId
-     * @param actionInstanceId
      * @throws ActionInstanceNotFoundException
      * @throws com.netflix.scheduledactions.exceptions.ActionOperationException
      */
@@ -230,7 +216,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
 
     /**
      * Enables the {@code ActionInstance}
-     * @param actionInstance
      * @throws com.netflix.scheduledactions.exceptions.ActionOperationException
      */
     @Override
@@ -251,7 +236,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
     /**
      * Deletes/Removes the {@code ActionInstance} associated with this actionInstanceId.
      * If it has a {@code CronTrigger} then it is also un-scheduled from scheduler
-     * @param actionInstanceId
      * @throws ActionInstanceNotFoundException
      * @throws com.netflix.scheduledactions.exceptions.ActionOperationException
      */
@@ -269,7 +253,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
     /**
      * Deletes/Removes the {@code ActionInstance}. If it has a {@code CronTrigger} then it is also un-scheduled from
      * scheduler
-     * @param actionInstance
      * @throws com.netflix.scheduledactions.exceptions.ActionOperationException
      */
     @Override
@@ -288,7 +271,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
 
     /**
      * Executes the {@code ActionInstance}
-     * @param actionInstanceId
      * @throws com.netflix.scheduledactions.exceptions.ActionInstanceNotFoundException
      * @throws com.netflix.scheduledactions.exceptions.ActionOperationException
      */
@@ -303,8 +285,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
 
     /**
      * Executes the {@code ActionInstance}
-     * @param actionInstance
-     * @param initiator
      * @throws com.netflix.scheduledactions.exceptions.ExecutionException
      */
     public Execution execute(final ActionInstance actionInstance, String initiator)  {
@@ -392,7 +372,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
 
     /**
      * Cancels the currently running {@code Execution} for given {@code ActionInstance} id
-     * @param executionId
      * @throws ActionInstanceNotFoundException
      */
     @Override
@@ -454,8 +433,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
 
     /**
      * Cancels all {@code Execution}s for this {@code ActionInstance} except for the one passed
-     * @param actionInstance
-     * @param execution
      */
     private void cancelPreviousExecutions(ActionInstance actionInstance, Execution execution) {
         List<Execution> executions = getInCompleteExecutionsBefore(actionInstance.getId(), execution);
@@ -468,8 +445,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
 
     /**
      * Returns a list of {@code Execution}s that are still not complete for a given actionInstance
-     * @param actionInstanceId
-     * @return
      */
     private List<Execution> getInCompleteExecutionsBefore(String actionInstanceId, Execution currentExecution) {
         List<Execution> executions = executionDao.getExecutions(actionInstanceId);
@@ -484,10 +459,6 @@ public class AbstractActionOperationsDelegate implements ActionOperationsDelegat
         return incomplete;
     }
 
-    /**
-     *
-     * @return
-     */
     protected Action newInstance(ActionInstance actionInstance) {
         try {
             return actionInstance.getAction().newInstance();

@@ -20,10 +20,6 @@ import org.xerial.snappy.Snappy;
 
 import java.io.IOException;
 
-/**
- *
- * @author sthadeshwar
- */
 public class SnappyCodec implements Codec {
 
     @Override

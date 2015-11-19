@@ -35,9 +35,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author sthadeshwar
- */
 public class ThriftCassandraDao<T> implements CassandraDao<T> {
 
     public static final String ALL = "all";

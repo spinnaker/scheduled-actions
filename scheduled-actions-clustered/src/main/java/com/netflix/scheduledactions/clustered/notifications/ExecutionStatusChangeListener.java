@@ -16,9 +16,6 @@
 
 package com.netflix.scheduledactions.clustered.notifications;
 
-/**
- * @author sthadeshwar
- */
 public interface ExecutionStatusChangeListener {
     public void onCancel(String executionId, String actionInstanceId);
 }

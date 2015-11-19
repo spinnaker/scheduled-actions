@@ -23,10 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-/**
- * Controller that does different {@link com.netflix.scheduledactions.triggers.Trigger} attributes validation
- * @author sthadeshwar
- */
 @RestController
 public class ValidationController {
 

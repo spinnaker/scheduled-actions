@@ -18,7 +18,6 @@ package com.netflix.scheduledactions;
 
 /**
  * Marker interface for clustered delegate
- * @author sthadeshwar
  */
 public interface ClusteredActionOperationsDelegate extends ActionOperationsDelegate {
 }

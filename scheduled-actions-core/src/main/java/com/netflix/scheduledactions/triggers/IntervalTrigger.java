@@ -26,9 +26,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * @author sthadeshwar
- */
 public class IntervalTrigger implements Trigger {
 
     private static final String ISO_8601_TIME_PREFIX = "PT";
@@ -49,8 +46,6 @@ public class IntervalTrigger implements Trigger {
 
     /**
      * Creates an interval trigger based on the given ISO-8601 standard interval expression
-     * @param iso8601Interval
-     * @param repeatCount
      */
     @JsonCreator
     public IntervalTrigger(@JsonProperty("iso8601Interval") String iso8601Interval,
@@ -61,9 +56,6 @@ public class IntervalTrigger implements Trigger {
 
     /**
      * Creates an interval trigger that repeats indefinitely
-     * @param interval
-     * @param intervalUnit
-     * @param startAt
      */
     public IntervalTrigger(int interval, TimeUnit intervalUnit, Date startAt) {
         this(interval, intervalUnit, -1, startAt);
@@ -71,8 +63,6 @@ public class IntervalTrigger implements Trigger {
 
     /**
      * Creates an interval trigger that starts immediately and repeats indefinitely
-     * @param interval
-     * @param intervalUnit
      */
     public IntervalTrigger(int interval, TimeUnit intervalUnit) {
         this(interval, intervalUnit, -1, null);
@@ -80,10 +70,6 @@ public class IntervalTrigger implements Trigger {
 
     /**
      * Creates an interval trigger based on the given parameters
-     * @param interval
-     * @param intervalUnit
-     * @param repeatCount
-     * @param startAt
      */
     public IntervalTrigger(int interval, TimeUnit intervalUnit, int repeatCount, Date startAt) {
         if (interval <= 0) {

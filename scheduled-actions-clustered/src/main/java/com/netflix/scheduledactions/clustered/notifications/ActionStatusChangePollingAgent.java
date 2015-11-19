@@ -25,9 +25,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author sthadeshwar
- */
 public class ActionStatusChangePollingAgent extends AbstractPollingAgent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ActionStatusChangePollingAgent.class);

@@ -21,9 +21,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
 
-/**
- * @author sthadeshwar
- */
 public class Context {
     private String actionInstanceId;
     private final String name;

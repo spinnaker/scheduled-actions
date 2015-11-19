@@ -16,9 +16,6 @@
 
 package com.netflix.scheduledactions.clustered;
 
-/**
- * @author sthadeshwar
- */
 public enum Status {
     CREATED, UPDATED, DISABLED, ENABLED, DELETED, CANCELED
 }

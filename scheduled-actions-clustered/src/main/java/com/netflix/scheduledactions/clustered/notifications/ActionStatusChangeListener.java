@@ -16,9 +16,6 @@
 
 package com.netflix.scheduledactions.clustered.notifications;
 
-/**
- * @author sthadeshwar
- */
 public interface ActionStatusChangeListener {
 
     public void onCreate(String actionInstanceId) throws Exception;
