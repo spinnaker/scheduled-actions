@@ -50,4 +50,5 @@ subprojects {
     }
 
     tasks.compileGroovy.enabled = false
+    tasks.javadoc.failOnError = false
 }
