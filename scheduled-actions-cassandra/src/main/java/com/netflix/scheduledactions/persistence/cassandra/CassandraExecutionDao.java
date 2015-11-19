@@ -24,10 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
- *
- * @author sthadeshwar
- */
 public class CassandraExecutionDao implements ExecutionDao {
 
     private final CassandraDao<Execution> cassandraDao;

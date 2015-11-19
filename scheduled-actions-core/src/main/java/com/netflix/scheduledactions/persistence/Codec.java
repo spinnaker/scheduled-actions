@@ -20,22 +20,17 @@ import java.io.IOException;
 
 /**
  * A compressor/de-compressor interface
- * @author sthadeshwar
  */
 public interface Codec {
 
     /**
      * Compress the provided bytes array
-     * @param bytes
-     * @return
      * @throws IOException
      */
     byte[] compress(byte[] bytes) throws IOException;
 
     /**
      * Un-compress the provided bytes array
-     * @param bytes
-     * @return
      * @throws IOException
      */
     byte[] decompress(byte[] bytes) throws IOException;

@@ -16,9 +16,6 @@
 
 package com.netflix.scheduledactions;
 
-/**
- * @author sthadeshwar
- */
 public enum ConcurrentExecutionStrategy {
     ALLOW("ALLOW"),
     REJECT("REJECT"),

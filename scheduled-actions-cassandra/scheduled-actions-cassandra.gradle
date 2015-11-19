@@ -16,12 +16,8 @@
 
 dependencies {
     compile project(":scheduled-actions-core")
-    compile ("com.netflix.astyanax:astyanax-core:2.0.2")
-    compile ("com.netflix.astyanax:astyanax-thrift:2.0.2")
-    compile ("com.netflix.astyanax:astyanax-cassandra:2.0.2")
-    compile ("com.netflix.astyanax:astyanax-recipes:2.0.2")
-    compile ("com.fasterxml.jackson.core:jackson-core:2.4.4")
-    compile ("com.fasterxml.jackson.core:jackson-databind:2.4.4")
-    compile ("com.fasterxml.jackson.core:jackson-annotations:2.4.4")
-    compile ("org.xerial.snappy:snappy-java:1.1.1.6")
+    spinnaker.group('jackson')
+    spinnaker.group('cassandra')
+    compile spinnaker.dependency('snappy')
+    compile "com.netflix.astyanax:astyanax-recipes:${spinnaker.version('astyanax')}"
 }

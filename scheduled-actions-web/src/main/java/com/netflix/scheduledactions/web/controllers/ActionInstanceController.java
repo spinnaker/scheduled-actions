@@ -28,10 +28,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- *
- * @author sthadeshwar
- */
 @RestController
 @ConditionalOnBean(ActionsOperator.class)
 public class ActionInstanceController {

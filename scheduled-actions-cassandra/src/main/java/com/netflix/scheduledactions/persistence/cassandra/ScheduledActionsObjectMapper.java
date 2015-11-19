@@ -24,9 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import rx.functions.Action1;
 
-/**
- * @author sthadeshwar
- */
 public class ScheduledActionsObjectMapper extends ObjectMapper {
 
     public ScheduledActionsObjectMapper() {

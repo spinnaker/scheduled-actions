@@ -20,38 +20,34 @@ buildscript {
         maven { url "http://dl.bintray.com/spinnaker/gradle" }
     }
     dependencies {
-        classpath "com.netflix.spinnaker:spinnaker-gradle-project:1.12.14"
+        classpath "com.netflix.spinnaker.gradle:spinnaker-gradle-project:3.1.0"
     }
 }
 
 
 
 allprojects {
+    apply plugin: 'spinnaker.project'
     apply plugin: 'idea'
     apply plugin: 'eclipse'
-    apply plugin: 'spinnaker-gradle-project'
     group = "com.netflix.scheduledactions"
 
     configurations.all {
         resolutionStrategy {
-            force 'org.codehaus.groovy:groovy-all:2.3.9'
+            force 'org.codehaus.groovy:groovy-all:2.3.11'
         }
     }
-
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
-
-    repositories { jcenter() }
 }
 
 subprojects {
-    apply plugin: 'java'
     apply plugin: 'groovy'
 
     dependencies {
-        compile ("org.slf4j:slf4j-api:1.7.10")
-        compile ("org.slf4j:slf4j-simple:1.7.10")
-  	    testCompile ("org.codehaus.groovy:groovy-all:2.3.9")
-  	    testCompile ("org.spockframework:spock-core:1.0-groovy-2.3")
+        spinnaker.group('spockBase')
+        compile spinnaker.dependency('slf4jApi')
+        testCompile spinnaker.dependency('slf4jSimple')
+        testCompile spinnaker.dependency('groovy')
     }
+
+    tasks.compileGroovy.enabled = false
 }

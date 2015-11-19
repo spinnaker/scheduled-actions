@@ -19,9 +19,6 @@ package com.netflix.scheduledactions.web.config;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @author sthadeshwar
- */
 @Configuration
 @ComponentScan("com.netflix.scheduledactions.web.controllers")
 public class SpringWebConfiguration {

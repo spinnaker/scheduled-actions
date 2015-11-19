@@ -22,9 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-/**
- * @author sthadeshwar
- */
 public class ExecutionStatusChangePollingAgent extends AbstractPollingAgent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ActionStatusChangePollingAgent.class);

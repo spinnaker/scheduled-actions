@@ -25,9 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
-/**
- * @author sthadeshwar
- */
 public class ClusteredActionOperationsDelegateImpl extends AbstractActionOperationsDelegate implements ClusteredActionOperationsDelegate {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClusteredActionOperationsDelegateImpl.class);

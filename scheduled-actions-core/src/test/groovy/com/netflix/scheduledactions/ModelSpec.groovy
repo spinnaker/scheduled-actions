@@ -26,10 +26,6 @@ import rx.functions.Action1
 import spock.lang.Shared
 import spock.lang.Specification
 
-/**
- *
- * @author sthadeshwar
- */
 class ModelSpec extends Specification {
   @Shared ObjectMapper objectMapper = new ObjectMapper()
 

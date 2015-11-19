@@ -21,9 +21,6 @@ import com.netflix.scheduledactions.clustered.notifications.ExecutionMessage;
 
 import java.util.List;
 
-/**
- * @author sthadeshwar
- */
 public interface ClusterMediator {
 
     public void sendActionMessage(ActionInstanceMessage actionInstanceMessage);

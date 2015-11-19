@@ -18,10 +18,6 @@ package com.netflix.scheduledactions
 
 import com.netflix.scheduledactions.triggers.CronTrigger
 import rx.functions.Action1
-/**
- *
- * @author sthadeshwar
- */
 class ActionInstanceSpec extends ModelSpec {
 
     static class TestAction extends ActionSupport {

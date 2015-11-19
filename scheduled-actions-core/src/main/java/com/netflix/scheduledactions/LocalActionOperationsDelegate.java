@@ -16,8 +16,5 @@
 
 package com.netflix.scheduledactions;
 
-/**
- * @author sthadeshwar
- */
 public interface LocalActionOperationsDelegate extends ActionOperationsDelegate {
 }
