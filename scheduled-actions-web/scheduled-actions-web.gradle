@@ -16,7 +16,5 @@
 
 dependencies {
     compile project(":scheduled-actions-core")
-    compile ("org.springframework.boot:spring-boot-starter-web:1.2.1.RELEASE")
-    compile ("org.springframework.boot:spring-boot-starter-actuator:1.2.1.RELEASE")
-    compile ("org.springframework.boot:spring-boot-starter-data-rest:1.2.1.RELEASE")
+    spinnaker.group('bootWeb')
 }
