@@ -1,6 +1,6 @@
 A library for management, operations and persistence of scheduled actions
 =
-
+[![Build Status](https://api.travis-ci.org/spinnaker/scheduled-actions.svg?branch=master)](https://travis-ci.org/spinnaker/scheduled-actions)
 Below are the features:
 
 * Create and register an ```com.netflix.scheduledactions.ActionInstance``` which gives a handle to the implemented action (```com.netflix.scheduledactions.Action```)
