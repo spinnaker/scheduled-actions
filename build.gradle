@@ -20,7 +20,7 @@ buildscript {
         maven { url "http://dl.bintray.com/spinnaker/gradle" }
     }
     dependencies {
-        classpath "com.netflix.spinnaker.gradle:spinnaker-gradle-project:3.1.0"
+        classpath "com.netflix.spinnaker.gradle:spinnaker-gradle-project:3.3.0"
     }
 }
 
@@ -31,6 +31,10 @@ allprojects {
     apply plugin: 'idea'
     apply plugin: 'eclipse'
     group = "com.netflix.scheduledactions"
+
+    spinnaker {
+        dependenciesVersion = "0.19.0"
+    }
 
     configurations.all {
         resolutionStrategy {
