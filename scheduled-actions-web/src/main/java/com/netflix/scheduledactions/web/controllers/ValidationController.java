@@ -18,6 +18,11 @@ package com.netflix.scheduledactions.web.controllers;
 
 import com.google.common.collect.ImmutableMap;
 import com.netflix.fenzo.triggers.TriggerUtils;
+import java.io.IOException;
+import java.text.ParseException;
+import javax.servlet.http.HttpServletResponse;
+import net.redhogs.cronparser.CronExpressionDescriptor;
+import net.redhogs.cronparser.Options;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,10 +33,19 @@ public class ValidationController {
 
     @RequestMapping(value = "/validateCronExpression", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
-    public Map<String,String> validateCronExpression(@RequestParam String cronExpression) {
+    public Map<String,Object> validateCronExpression(@RequestParam String cronExpression) {
+        ImmutableMap.Builder<String,Object> mapBuilder = ImmutableMap.builder();
         try {
             TriggerUtils.validateCronExpression(cronExpression);
-            return ImmutableMap.<String,String>builder().put("response", "Cron expression is valid").build();
+            mapBuilder.put("response", "Cron expression is valid");
+            try {
+                Options options = new Options();
+                options.setZeroBasedDayOfWeek(false);
+                mapBuilder.put("description", CronExpressionDescriptor.getDescription(cronExpression, options));
+            } catch (ParseException IGNORED) {
+                mapBuilder.put("description", "No description available");
+            }
+            return mapBuilder.build();
         } catch (IllegalArgumentException e) {
             throw new InvalidCronExpressionException(
                 String.format("Cron expression '%s' is not valid: %s", cronExpression, e.getMessage())
@@ -52,7 +66,16 @@ public class ValidationController {
         }
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidCronExpressionException.class)
+    void handleInvalidCronExpression(HttpServletResponse response, InvalidCronExpressionException e) throws IOException {
+        response.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidISO8601IntervalException.class)
+    void handleInvalidISOExpression(HttpServletResponse response, InvalidISO8601IntervalException e) throws IOException {
+        response.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+
     public static class InvalidCronExpressionException extends IllegalArgumentException {
         public InvalidCronExpressionException(String message) {
             super(message);

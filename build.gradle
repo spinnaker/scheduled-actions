@@ -48,7 +48,9 @@ subprojects {
 
     dependencies {
         spinnaker.group('spockBase')
+        spinnaker.group('test')
         compile spinnaker.dependency('slf4jApi')
+        compile 'net.redhogs.cronparser:cron-parser-core:2.8'
         testCompile spinnaker.dependency('slf4jSimple')
         testCompile spinnaker.dependency('groovy')
     }
