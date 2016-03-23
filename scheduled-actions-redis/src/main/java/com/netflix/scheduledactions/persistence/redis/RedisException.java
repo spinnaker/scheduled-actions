@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-rootProject.name = "scheduled-actions"
-include "scheduled-actions-core",
-    "scheduled-actions-redis",
-    "scheduled-actions-web",
-    "scheduled-actions-clustered"
+package com.netflix.scheduledactions.persistence.redis;
 
-def setBuildFile(project) {
-  project.buildFileName = "${project.name}.gradle"
-  project.children.each {
-    setBuildFile(it)
-  }
-}
-
-rootProject.children.each {
-  setBuildFile it
+public class RedisException extends RuntimeException {
+    public RedisException(String message, Throwable throwable) {
+        super(message, throwable);
+    }
 }

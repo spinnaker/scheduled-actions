@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-rootProject.name = "scheduled-actions"
-include "scheduled-actions-core",
-    "scheduled-actions-redis",
-    "scheduled-actions-web",
-    "scheduled-actions-clustered"
+package com.netflix.scheduledactions.persistence.redis;
 
-def setBuildFile(project) {
-  project.buildFileName = "${project.name}.gradle"
-  project.children.each {
-    setBuildFile(it)
-  }
-}
+import java.util.List;
 
-rootProject.children.each {
-  setBuildFile it
+public interface RedisDao<T> {
+
+    public void upsert(String id, T value, Integer ttlSeconds);
+
+    public void upsertToGroup(String group, String id, T value, Integer ttlSeconds);
+
+    public void delete(String id);
+
+    public void deleteFromGroup(String group, String id);
+
+    public T get(String id);
+
+    public List<T> getGroup(String group);
+
+    public List<T> getAll();
+
 }
