@@ -33,22 +33,18 @@ public class RedisActionInstanceDao implements ActionInstanceDao {
         this.redisDao = new JedisDao(ActionInstance.class, pool, new ScheduledActionsObjectMapper());
     }
 
-    @PostConstruct
-    public void init() {
-    }
-
     @Override
     public String createActionInstance(String group, ActionInstance actionInstance) {
         if (actionInstance.getId() == null) {
             actionInstance.setId(UUID.randomUUID().toString());
         }
-        redisDao.upsertToGroup(group, actionInstance.getId(), actionInstance, null);
+        redisDao.upsertToGroup(group, actionInstance.getId(), actionInstance, 0);
         return actionInstance.getId();
     }
 
     @Override
     public void updateActionInstance(ActionInstance actionInstance) {
-        redisDao.upsert(actionInstance.getId(), actionInstance, null);
+        redisDao.upsert(actionInstance.getId(), actionInstance, 0);
     }
 
     @Override

@@ -17,6 +17,7 @@
 rootProject.name = "scheduled-actions"
 include "scheduled-actions-core",
     "scheduled-actions-redis",
+    "scheduled-actions-cassandra",
     "scheduled-actions-web",
     "scheduled-actions-clustered"
 

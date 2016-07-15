@@ -27,52 +27,48 @@ import java.util.UUID;
 
 public class RedisTriggerDao implements TriggerDao {
 
-    private final RedisDao<Trigger> RedisDao;
+    private final RedisDao<Trigger> redisDao;
     private final ObjectMapper objectMapper;
 
     public RedisTriggerDao(JedisPool pool) {
         this.objectMapper = new ScheduledActionsObjectMapper();
-        this.RedisDao = new JedisDao(Trigger.class, pool, objectMapper);
-    }
-
-    @PostConstruct
-    public void init() {
+        this.redisDao = new JedisDao(Trigger.class, pool, objectMapper);
     }
 
     @Override
     public String createTrigger(String triggerGroup, Trigger trigger) {
         trigger.setId(UUID.randomUUID().toString());
-        RedisDao.upsertToGroup(triggerGroup, trigger.getId(), trigger, null);
+        redisDao.upsertToGroup(triggerGroup, trigger.getId(), trigger, 0);
         return trigger.getId();
     }
 
     @Override
     public void updateTrigger(Trigger trigger) {
-        RedisDao.upsert(trigger.getId(), trigger, null);
+        redisDao.upsert(trigger.getId(), trigger, 0);
     }
 
     @Override
     public Trigger getTrigger(String triggerId) {
-        Trigger trigger = RedisDao.get(triggerId);
+        Trigger trigger = redisDao.get(triggerId);
         updateActualTriggerType(trigger);
         return trigger;
     }
 
     @Override
     public void deleteTrigger(String triggerGroup, Trigger trigger) {
-        RedisDao.deleteFromGroup(triggerGroup, trigger.getId());
+        redisDao.deleteFromGroup(triggerGroup, trigger.getId());
     }
 
     @Override
     public List<Trigger> getTriggers(String triggerGroup) {
-        List<Trigger> triggers = RedisDao.getGroup(triggerGroup);
+        List<Trigger> triggers = redisDao.getGroup(triggerGroup);
         updateActualTriggerTypes(triggers);
         return triggers;
     }
 
     @Override
     public List<Trigger> getTriggers() {
-        List<Trigger> triggers = RedisDao.getAll();
+        List<Trigger> triggers = redisDao.getAll();
         updateActualTriggerTypes(triggers);
         return triggers;
     }
@@ -91,5 +87,4 @@ public class RedisTriggerDao implements TriggerDao {
             updateActualTriggerType(trigger);
         }
     }
-
 }

@@ -27,38 +27,33 @@ import java.util.UUID;
 
 public class RedisExecutionDao implements ExecutionDao {
 
-    private final RedisDao<Execution> RedisDao;
+    private final RedisDao<Execution> redisDao;
     private static final int TTL_SECONDS = 60 * 60 * 24;
 
     public RedisExecutionDao(JedisPool pool) {
-        this.RedisDao = new JedisDao(Execution.class, pool, new ScheduledActionsObjectMapper());
-    }
-
-    @PostConstruct
-    public void init() {
-
+        this.redisDao = new JedisDao(Execution.class, pool, new ScheduledActionsObjectMapper());
     }
 
     @Override
     public String createExecution(String actionInstanceId, Execution execution) {
         execution.setId(UUID.randomUUID().toString());
-        RedisDao.upsertToGroup(actionInstanceId, execution.getId(), execution, Integer.valueOf(TTL_SECONDS));
+        redisDao.upsertToGroup(actionInstanceId, execution.getId(), execution, Integer.valueOf(TTL_SECONDS));
         return execution.getId();
     }
 
     @Override
     public void updateExecution(Execution execution) {
-        RedisDao.upsert(execution.getId(), execution, Integer.valueOf(TTL_SECONDS));
+        redisDao.upsert(execution.getId(), execution, Integer.valueOf(TTL_SECONDS));
     }
 
     @Override
     public Execution getExecution(String executionId) {
-        return RedisDao.get(executionId);
+        return redisDao.get(executionId);
     }
 
     @Override
     public void deleteExecution(String actionInstanceId, Execution execution) {
-        RedisDao.deleteFromGroup(actionInstanceId, execution.getId());
+        redisDao.deleteFromGroup(actionInstanceId, execution.getId());
     }
 
     @Override
@@ -69,7 +64,7 @@ public class RedisExecutionDao implements ExecutionDao {
 
     @Override
     public List<Execution> getExecutions(String actionInstanceId) {
-        return new ArrayList<>(RedisDao.getGroup(actionInstanceId));
+        return new ArrayList<>(redisDao.getGroup(actionInstanceId));
     }
 
 }

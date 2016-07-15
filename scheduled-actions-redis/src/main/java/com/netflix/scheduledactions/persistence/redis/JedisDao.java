@@ -42,12 +42,10 @@ public class JedisDao<T> implements RedisDao<T> {
 
     @Override
     public void upsert(String id, T value, Integer ttlSeconds) {
-        try {
-            Jedis resource = jedisPool.getResource();
+        try (Jedis resource = jedisPool.getResource()) {
             String key = prefix + ":::" + id;
             resource.set(key, objectMapper.writeValueAsString(value));
             resource.expire(key, ttlSeconds);
-            jedisPool.returnResource(resource);
         } catch (Exception e) {
             throw new RuntimeException(String.format("Exception occurred while upserting value for '%s'", id), e);
         }
@@ -55,13 +53,11 @@ public class JedisDao<T> implements RedisDao<T> {
 
     @Override
     public void upsertToGroup(String group, String id, T value, Integer ttlSeconds) {
-        try {
+        try (Jedis resource = jedisPool.getResource()) {
             String val = objectMapper.writeValueAsString(value);
-            Jedis resource = jedisPool.getResource();
             String key = prefix + ":::" + group + ":::" + id;
             resource.set(key, val);
             resource.expire(key, ttlSeconds);
-            jedisPool.returnResource(resource);
         } catch (Exception e) {
             throw new RuntimeException(String.format("Exception occurred while upserting value for '%s'", id), e);
         }
@@ -69,11 +65,9 @@ public class JedisDao<T> implements RedisDao<T> {
 
     @Override
     public void delete(String id) {
-        try {
-            Jedis resource = jedisPool.getResource();
+        try (Jedis resource = jedisPool.getResource()) {
             String key = prefix + ":::" + id;
             resource.del(key);
-            jedisPool.returnResource(resource);
         } catch (Exception e) {
             throw new RuntimeException(String.format("Exception occurred while deleting value for '%s'", id), e);
         }
@@ -81,11 +75,9 @@ public class JedisDao<T> implements RedisDao<T> {
 
     @Override
     public void deleteFromGroup(String group, String id) {
-        try {
-            Jedis resource = jedisPool.getResource();
+        try (Jedis resource = jedisPool.getResource()) {
             String key = prefix + ":::" + group + ":::" + id;
             resource.del(key);
-            jedisPool.returnResource(resource);
         } catch (Exception e) {
             throw new RuntimeException(String.format("Exception occurred while deleting value for '%s' from group '%s'", id, group), e);
         }
@@ -93,11 +85,9 @@ public class JedisDao<T> implements RedisDao<T> {
 
     @Override
     public T get(String id) {
-        try {
-            Jedis resource = jedisPool.getResource();
+        try (Jedis resource = jedisPool.getResource()) {
             String key = prefix + ":::" + id;
             String val = resource.get(key);
-            jedisPool.returnResource(resource);
             return objectMapper.readValue(val, parameterClass);
         } catch (Exception e) {
             throw new RuntimeException(String.format("Exception occurred while fetching value for '%s'", id), e);
@@ -115,10 +105,9 @@ public class JedisDao<T> implements RedisDao<T> {
     }
 
     private List<T> getList(String pattern) {
-        try {
+        try (Jedis resource = jedisPool.getResource()) {
             List<T> vals = new ArrayList<>();
-            Jedis resource = jedisPool.getResource();
-            for (String key : resource.keys(pattern)) {
+            for (String key : resource.scan(pattern).getResult()) {
                 vals.add(objectMapper.readValue(resource.get(key), parameterClass));
             }
             return vals;
