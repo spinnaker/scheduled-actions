@@ -85,6 +85,10 @@ public abstract class AbstractInMemoryDao<T> {
         return items;
     }
 
+    protected boolean isIdFormat(String id) {
+        return id.contains(idSeparator);
+    }
+
     protected String createId(String group, String id) {
         if (group == null || id == null || group.contains(idSeparator) || id.contains(idSeparator)) {
             throw new IllegalArgumentException(String.format("Illegal arguments specified for column name creation (group = %s, id = %s)", group, id));

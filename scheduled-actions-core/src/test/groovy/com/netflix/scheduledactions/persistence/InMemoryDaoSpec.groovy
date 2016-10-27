@@ -92,7 +92,6 @@ class InMemoryDaoSpec extends Specification {
         ActionInstance savedActionInstance = actionInstanceDao.getActionInstance(actionInstanceId)
 
         then:
-        then:
         savedActionInstance.id == actionInstanceId
         savedActionInstance.name == 'actionInstance1'
         savedActionInstance.owners == null

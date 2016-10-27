@@ -27,6 +27,8 @@ public class InMemoryActionInstanceDao extends AbstractInMemoryDao<ActionInstanc
     public String createActionInstance(String group, ActionInstance actionInstance) {
         if (actionInstance.getId() == null) {
             actionInstance.setId(createId(group, UUID.randomUUID().toString()));
+        } else if (!isIdFormat(actionInstance.getId())) {
+            actionInstance.setId(createId(group, actionInstance.getId()));
         }
         create(group, actionInstance.getId(), actionInstance);
         return actionInstance.getId();
