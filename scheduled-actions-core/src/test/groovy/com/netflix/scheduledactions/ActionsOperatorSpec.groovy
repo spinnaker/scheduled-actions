@@ -26,7 +26,7 @@ import spock.lang.Specification
 class ActionsOperatorSpec extends Specification {
 
     @Shared DaoConfigurer daoConfigurer = new DaoConfigurer(new InMemoryActionInstanceDao(), new InMemoryTriggerDao(), new InMemoryExecutionDao())
-    @Shared int threadPoolSize = 10     // Adjust this as per the number of tests
+    @Shared int threadPoolSize = 13     // Adjust this as per the number of tests
     @Shared ActionsOperator actionsOperator = new ActionsOperator(
         TriggerOperator.getInstance(daoConfigurer.triggerDao, threadPoolSize),
         daoConfigurer,
@@ -346,7 +346,7 @@ class ActionsOperatorSpec extends Specification {
 
         then:
         execution1 != null
-        execution1 != null
+        execution2 != null
 
         when:
         Thread.sleep(20*1000L)
