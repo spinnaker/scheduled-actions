@@ -18,14 +18,15 @@ package com.netflix.scheduledactions.web.controllers;
 
 import com.google.common.collect.ImmutableMap;
 import com.netflix.fenzo.triggers.TriggerUtils;
-import java.io.IOException;
-import java.text.ParseException;
-import javax.servlet.http.HttpServletResponse;
+import com.netflix.scheduledactions.triggers.CronExpressionFuzzer;
 import net.redhogs.cronparser.CronExpressionDescriptor;
 import net.redhogs.cronparser.Options;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Map;
 
 @RestController
@@ -36,14 +37,18 @@ public class ValidationController {
     public Map<String,Object> validateCronExpression(@RequestParam String cronExpression) {
         ImmutableMap.Builder<String,Object> mapBuilder = ImmutableMap.builder();
         try {
-            TriggerUtils.validateCronExpression(cronExpression);
+            CronExpressionFuzzer.validate(cronExpression);
             mapBuilder.put("response", "Cron expression is valid");
-            try {
-                Options options = new Options();
-                options.setZeroBasedDayOfWeek(false);
-                mapBuilder.put("description", CronExpressionDescriptor.getDescription(cronExpression, options));
-            } catch (ParseException IGNORED) {
-                mapBuilder.put("description", "No description available");
+            if (CronExpressionFuzzer.hasFuzzyExpression(cronExpression)) {
+                mapBuilder.put("description", "No description available for fuzzy cron expressions");
+            } else {
+                try {
+                    Options options = new Options();
+                    options.setZeroBasedDayOfWeek(false);
+                    mapBuilder.put("description", CronExpressionDescriptor.getDescription(cronExpression, options));
+                } catch (ParseException IGNORED) {
+                    mapBuilder.put("description", "No description available");
+                }
             }
             return mapBuilder.build();
         } catch (IllegalArgumentException e) {
