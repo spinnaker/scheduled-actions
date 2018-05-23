@@ -18,7 +18,6 @@ package com.netflix.scheduledactions.triggers;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.netflix.fenzo.triggers.TriggerUtils;
 import com.netflix.scheduledactions.Context;
 import rx.functions.Action1;
 
@@ -45,7 +44,7 @@ public class CronTrigger implements Trigger {
 
     @Override
     public void validate() throws IllegalArgumentException {
-        TriggerUtils.validateCronExpression(this.cronExpression);
+        CronExpressionFuzzer.validate(cronExpression);
     }
 
     @Override

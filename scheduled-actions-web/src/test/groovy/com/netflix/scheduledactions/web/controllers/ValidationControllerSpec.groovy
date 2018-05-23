@@ -39,4 +39,15 @@ class ValidationControllerSpec extends Specification {
     result.response.errorMessage == "Cron expression '0 0 10 * * 1' is not valid: Support for specifying both a " +
         "day-of-week AND a day-of-month parameter is not implemented."
   }
+
+  void 'should validate fuzzy expressions'() {
+    when:
+    def result = validate("H 0 10 ? * 1")
+    def responseBody = objectMapper.readValue(result.response.contentAsByteArray, Map)
+
+    then:
+    responseBody.response == "Cron expression is valid"
+    responseBody.description == "No description available for fuzzy cron expressions"
+
+  }
 }
