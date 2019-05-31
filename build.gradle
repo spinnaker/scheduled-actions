@@ -17,7 +17,7 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url 'http://spinnaker.bintray.com/gradle/' } 
+        maven { url 'https://spinnaker.bintray.com/gradle/' } 
     }
     dependencies {
         classpath 'com.netflix.spinnaker.gradle:spinnaker-gradle-project:3.9.0'
