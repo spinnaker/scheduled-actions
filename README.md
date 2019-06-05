@@ -1,3 +1,7 @@
+> NOTE: this library is deprecated and no longer under development.  
+As of Spinnaker version 1.13, it is no longer used inside Spinnaker. 
+
+
 A library for management, operations and persistence of scheduled actions
 =
 [![Build Status](https://api.travis-ci.org/spinnaker/scheduled-actions.svg?branch=master)](https://travis-ci.org/spinnaker/scheduled-actions)
